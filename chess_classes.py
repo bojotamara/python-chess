@@ -130,6 +130,19 @@ class King(Piece):
     def __init__(self, color, y, x):
         super().__init__(color,y,x)
 
+    def gen_legal_moves(self, board):
+        offsets = [(1,1),(-1,-1),(1,-1),(-1,1),(0,1),(1,0),(-1,0),(0,-1)]
+
+        for offset in offsets:
+            newX = self.x + offset[0]
+            newY = self.y + offset[1]
+
+            if move_check(self.color,newY,newX,board):
+                self.move_list.append((newY,newX))
+
+        return self.move_list
+
+
 class Queen(Piece):
 
     def __init__(self, color, y, x):
@@ -139,8 +152,10 @@ class Queen(Piece):
 board = Board()
 
 
-board.array[6][6] = Knight("w",6,6)
+#board.array[7][7] = King("w",7,7)
+#board.array[4][4] = King("w",4,4)
 
-piece = board.array[6][6]
+piece = board.array[7][4]
+board.array[6][4] = None
 list1 = piece.gen_legal_moves(board)
 print(list1)
