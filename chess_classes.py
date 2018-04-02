@@ -57,6 +57,7 @@ class Pawn(Piece):
 
     def __init__(self, color, y, x):
         super().__init__(color,y,x)
+        self.sprite = "assets/{}pawn.png".format(self.color)
 
     # returns a list that contains tuples where the piece can move
     def gen_legal_moves(self, board):
@@ -101,16 +102,19 @@ class Rook(Piece):
 
     def __init__(self, color, y, x):
         super().__init__(color,y,x)
+        self.sprite = "assets/{}rook.png".format(self.color)
 
 class Bishop(Piece):
 
     def __init__(self, color, y, x):
         super().__init__(color,y,x)
+        self.sprite = "assets/{}bishop.png".format(self.color)
 
 class Knight(Piece):
 
     def __init__(self, color, y, x):
         super().__init__(color,y,x)
+        self.sprite = "assets/{}knight.png".format(self.color)
 
     def gen_legal_moves(self, board):
         offsets = [(-1,-2),(-1,2),(-2,-1),(-2,1),(1,-2),(1,2),(2,-1),(2,1)]
@@ -129,6 +133,7 @@ class King(Piece):
 
     def __init__(self, color, y, x):
         super().__init__(color,y,x)
+        self.sprite = "assets/{}king.png".format(self.color)
 
     def gen_legal_moves(self, board):
         offsets = [(1,1),(-1,-1),(1,-1),(-1,1),(0,1),(1,0),(-1,0),(0,-1)]
@@ -147,6 +152,7 @@ class Queen(Piece):
 
     def __init__(self, color, y, x):
         super().__init__(color,y,x)
+        self.sprite = "assets/{}queen.png".format(self.color)
 
 
 board = Board()
