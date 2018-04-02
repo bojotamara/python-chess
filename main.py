@@ -18,6 +18,16 @@ screen.blit(bg, [0, 0])
 
 #board matrix
 b=Board()
+def update_board():
+    screen.blit(bg, [0, 0])
+    for row in board.array:
+        for piece in row:
+            if piece: #if piece is not none
+                print(piece)
+                s=pygame.image.load(piece.sprite)
+                pos = (piece.x*60,piece.y*60)
+                screen.blit(s,pos)
+
 update_board()
 
 c=0
@@ -39,8 +49,6 @@ while not crashed:
     pygame.display.update()
     clock.tick(60)
 
-def update_board():
-    for i,j in b:
-        print(i,j)
+
 # if __name__ == "__main__":
 #     b = Board()
