@@ -1,32 +1,39 @@
+def check_bounds(x,y):
+    if x >= 0 and x < 8 and y >= 0 and y < 8:
+        return True
+    else:
+        return False
+
+
+
 class Board:
 
     #None is empty
-    #X is invalid
-
     def __init__(self):
         self.array = [[None for x in range(8)] for y in range(8)]
+
+    def move_piece(self, piece, y, x):
+        oldx = piece.x
+        oldy = piece.y
+        self.array[oldy][oldx] = None
+        self.array[y][x] = piece
 
 
 class Piece:
 
-    def __init__(self, color, x, y):
+    def __init__(self, color, y, x):
         self.color = color
-        self.coords = (x,y)
+        self.x = x
+        self.y = y
 
     def gen_legal_moves():
         # returns a move-list thats a tuple
         pass
 
-    def check_bounds(x,y):
-        if x >= 0 and x < 8 and y >= 0 and y < 0:
-            return True
-        else:
-            return False
-
 class Pawn(Piece):
 
-    def __init__(self, color, x, y):
-        super().__init__(color,x,y)
+    def __init__(self, color, y, x):
+        super().__init__(color,y,x)
 
     def gen_legal_moves(board):
         move_list = []
@@ -34,46 +41,63 @@ class Pawn(Piece):
 
         if self.color == "white":
             # normal move forward
-            if board.array[self.y - 1][self.x] == None:
+            if board.array[self.y - 1][self.x] == None and check_bounds(self.y - 1,self.x):
                 move_list.append( (self.x, self.y - 1) )
 
-            #if board.array[self.y -1][]
+            for diff in offsets:
+                newX = self.x + diff
+                newY = self.y + 1
+                space = board.array[newY][newX]
+
+                if space.color == "black" and check_bounds(newX,newY):
+                    move.list.append( (newX,newY))
+
+
 
         elif self.color == "black":
             # normal move forward
-            if board.array[self.y + 1][self.x] == None:
+            if board.array[self.y + 1][self.x] == None and check_bounds(self.y + 1,self.x):
                 move_list.append( (self.x, self.y + 1) )
 
+            for diff in offsets:
+                newX = self.x + diff
+                newY = self.y + 1
+                space = board.array[newY][newX]
+
+                if space.color == "white" and check_bounds(newX,newY):
+                    move.list.append( (newX,newY))
 
 
 class Rook(Piece):
 
-    def __init__(self, color, x, y):
-        super().__init__(color,x,y)
+    def __init__(self, color, y, x):
+        super().__init__(color,y,x)
 
 class Bishop(Piece):
 
-    def __init__(self, color, x, y):
-        super().__init__(color,x,y)
+    def __init__(self, color, y, x):
+        super().__init__(color,y,x)
 
 class Knight(Piece):
 
-    def __init__(self, color, x, y):
-        super().__init__(color,x,y)
+    def __init__(self, color, y, x):
+        super().__init__(color,y,x)
 
 class King(Piece):
 
-    def __init__(self, color, x, y):
-        super().__init__(color,x,y)
+    def __init__(self, color, y, x):
+        super().__init__(color,y,x)
 
 class Queen(Piece):
 
-    def __init__(self, color, x, y):
-        super().__init__(color,x,y)
+    def __init__(self, color, y, x):
+        super().__init__(color,y,x)
 
 
 board = Board()
-print(board.array[7][8])
-board.array[0][0] = Pawn("white",0,0)
-piece = board.array[0][0]
-print(piece.coords)
+
+board.array[6][7] = Pawn("white",6,7)
+piece = board.array[6][7]
+board.move_piece(piece,1,1)
+print(board.array[1][1])
+print(board.array[6][7])
