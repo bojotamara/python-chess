@@ -1,5 +1,5 @@
 #This code not written by us. It was used to generate a Background chessboard image
-#It was modified to make brown squares
+#It was modified to make brown squares, and the chess board was resized
 
 #!/usr/bin/python
 # adapted from:
@@ -7,7 +7,7 @@
 from PIL import Image, ImageDraw
 from itertools import cycle
 
-def draw_chessboard(n=8, pixel_width=500):
+def draw_chessboard(n=8, pixel_width=60*8):
     """
     Draw an n x n chessboard using PIL.
     """
