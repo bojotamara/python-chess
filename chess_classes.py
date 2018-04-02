@@ -5,7 +5,6 @@ def check_bounds(x,y):
         return False
 
 
-
 class Board:
 
     #None is empty
@@ -35,38 +34,52 @@ class Pawn(Piece):
     def __init__(self, color, y, x):
         super().__init__(color,y,x)
 
-    def gen_legal_moves(board):
+    # returns a list that contains tuples where the piece can move
+    def gen_legal_moves(self, board):
         move_list = []
         offsets = [-1, 1]
 
-        if self.color == "white":
+        if self.color == "w":
             # normal move forward
             if board.array[self.y - 1][self.x] == None and check_bounds(self.y - 1,self.x):
-                move_list.append( (self.x, self.y - 1) )
+                move_list.append( (self.y - 1, self.x) )
 
             for diff in offsets:
                 newX = self.x + diff
-                newY = self.y + 1
-                space = board.array[newY][newX]
+                newY = self.y - 1
+                if not check_bounds(newX,newY):
+                    continue
 
-                if space.color == "black" and check_bounds(newX,newY):
-                    move.list.append( (newX,newY))
+                p = board.array[newY][newX]
+
+                if p == None:
+                    continue
+
+                if p.color == "b":
+                    move_list.append( (newY,newX))
 
 
 
-        elif self.color == "black":
+        elif self.color == "b":
             # normal move forward
             if board.array[self.y + 1][self.x] == None and check_bounds(self.y + 1,self.x):
-                move_list.append( (self.x, self.y + 1) )
+                move_list.append( (self.y + 1, self.x) )
 
             for diff in offsets:
                 newX = self.x + diff
                 newY = self.y + 1
-                space = board.array[newY][newX]
+                if not check_bounds(newX,newY):
+                    continue
 
-                if space.color == "white" and check_bounds(newX,newY):
-                    move.list.append( (newX,newY))
+                p = board.array[newY][newX]
 
+                if p == None:
+                    continue
+
+                if p.color == "w":
+                    move_list.append( (newY,newx))
+
+        return move_list
 
 class Rook(Piece):
 
@@ -96,8 +109,9 @@ class Queen(Piece):
 
 board = Board()
 
-board.array[6][7] = Pawn("white",6,7)
-piece = board.array[6][7]
-board.move_piece(piece,1,1)
-print(board.array[1][1])
-print(board.array[6][7])
+board.array[6][6] = Pawn("w",6,6)
+board.array[5][5] = Pawn("w",5,5)
+board.array[5][7] = Pawn("b",5,7)
+piece = board.array[6][6]
+list1 = piece.gen_legal_moves(board)
+print(list1)
