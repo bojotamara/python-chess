@@ -1,6 +1,19 @@
 
 # a basic move check, that only checks if the space is occupied, or if
 # its a friendly piece
+def eat_check(your_color, y, x ,board):
+    piece = board.array[y][x]
+
+    if piece == None:
+        return False
+    else:
+
+        if piece.color != your_color:
+            return True
+        else:
+            return False
+
+
 def move_check(your_color, y, x ,board):
 
     if x < 0 or x > 7 or y < 0 or y > 7:
@@ -49,9 +62,39 @@ class Piece:
         self.y = y
         self.move_list = []
 
-    def gen_legal_moves():
-        # returns a move-list thats a tuple
+    def line_attack_gen(self,board):
+        #vertical lines
+        newX = self.x
+
+        for i in (-1,1):
+            newY = self.y
+            while(True):
+                newY += i
+                if move_check(self.color,newY,newX,board):
+                    self.move_list.append((newY,newX))
+                    if eat_check(self.color,newY,newX,board):
+                        break
+                else: # there is an obstruction
+                    break
+
+        #horizontal lines
+        newY = self.y
+
+        for i in (-1,1):
+            newX = self.x
+            while(True):
+                newX += i
+                if move_check(self.color,newY,newX,board):
+                    self.move_list.append((newY,newX))
+                    if eat_check(self.color,newY,newX,board):
+                        break
+                else: # there is an obstruction
+                    break
+
+    def diag_attack_gen(self,board):
         pass
+
+
 
 class Pawn(Piece):
 
@@ -101,6 +144,13 @@ class Rook(Piece):
 
     def __init__(self, color, y, x):
         super().__init__(color,y,x)
+
+    def gen_legal_moves(self, board):
+
+        self.line_attack_gen(board)
+
+        return self.move_list
+
 
 class Bishop(Piece):
 
@@ -153,9 +203,9 @@ board = Board()
 
 
 #board.array[7][7] = King("w",7,7)
-#board.array[4][4] = King("w",4,4)
+board.array[3][3] = Rook("w",3,3)
 
-piece = board.array[7][4]
-board.array[6][4] = None
+piece = board.array[3][3]
+#board.array[6][4] = None
 list1 = piece.gen_legal_moves(board)
 print(list1)
