@@ -92,8 +92,22 @@ class Piece:
                     break
 
     def diag_attack_gen(self,board):
-        pass
+        increments = [(-1,-1),(1,1),(1,-1),(-1,1)]
 
+        for offset in increments:
+            newX = self.x
+            newY = self.y
+
+            while (True):
+                newX += offset[0]
+                newY += offset[1]
+
+                if move_check(self.color,newY,newX,board):
+                    self.move_list.append((newY,newX))
+                    if eat_check(self.color,newY,newX,board):
+                        break
+                else: # there is an obstruction
+                    break
 
 
 class Pawn(Piece):
@@ -160,6 +174,13 @@ class Bishop(Piece):
         super().__init__(color,y,x)
         self.sprite = "assets/{}bishop.png".format(self.color)
 
+    def gen_legal_moves(self, board):
+
+        self.diag_attack_gen(board)
+
+        return self.move_list
+
+
 class Knight(Piece):
 
     def __init__(self, color, y, x):
@@ -204,12 +225,19 @@ class Queen(Piece):
         super().__init__(color,y,x)
         self.sprite = "assets/{}queen.png".format(self.color)
 
+    def gen_legal_moves(self, board):
+
+        self.line_attack_gen(board)
+        self.diag_attack_gen(board)
+
+        return self.move_list
+
 
 board = Board()
 
 
 #board.array[7][7] = King("w",7,7)
-board.array[3][3] = Rook("w",3,3)
+board.array[3][3] = Queen("w",3,3)
 
 piece = board.array[3][3]
 #board.array[6][4] = None
