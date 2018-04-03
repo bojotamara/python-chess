@@ -119,39 +119,31 @@ class Pawn(Piece):
     # returns a list that contains tuples where the piece can move
     def gen_legal_moves(self, board):
 
+        incr = {"w": -1, "b":1}
         offsets = [-1, 1]
+        c = self.color
 
-        if self.color == "w":
-            # normal move forward
-            if board.array[self.y - 1][self.x] == None and check_bounds(self.y - 1,self.x):
-                self.move_list.append( (self.y - 1, self.x) )
+        newY = self.y + incr[c]
+        # normal move forward
+        if newY >=0 and newY <8 and board.array[newY][self.x] == None:
+            self.move_list.append( (newY, self.x) )
 
-            for diff in offsets:
-                newX = self.x + diff
-                newY = self.y - 1
-
-                if not move_check(self.color,newY,newX,board):
-                    continue
-
-                else:
-                    self.move_list.append( (newY,newX))
+            if (self.y == 1 and c == "b") or (self.y == 6 and c == "w"):
+                newY += incr[c]
+                if newY >=0 and newY <8 and board.array[newY][self.x] == None:
+                    self.move_list.append( (newY, self.x) )
 
 
+        for diff in offsets:
+            newX = self.x + diff
+            newY = self.y + incr[c]
 
-        elif self.color == "b":
-            # normal move forward
-            if board.array[self.y + 1][self.x] == None and check_bounds(self.y + 1,self.x):
-                self.move_list.append( (self.y + 1, self.x) )
+            if not move_check(c,newY,newX,board) or not eat_check(c,newY,newX,board):
+                continue
 
-            for diff in offsets:
-                newX = self.x + diff
-                newY = self.y + 1
+            else:
+                self.move_list.append( (newY,newX))
 
-                if not move_check(self.color,newY,newX,board):
-                    continue
-
-                else:
-                    self.move_list.append( (newY,newX))
 
         return self.move_list
 
@@ -237,9 +229,11 @@ board = Board()
 
 
 #board.array[7][7] = King("w",7,7)
-board.array[3][3] = Queen("w",3,3)
+board.array[2][1] = Queen("w",2,1)
 
-piece = board.array[3][3]
+#board.array[2][2] = Queen("b",2,2)
+
+piece = board.array[1][1]
 #board.array[6][4] = None
 list1 = piece.gen_legal_moves(board)
 print(list1)
