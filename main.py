@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import pygame
 # from assets import *
-from chess_classes import *
+from board import *
 
 pygame.init()
 
@@ -17,7 +17,7 @@ screen.blit(bg, [0, 0])
 # screen.blit(wk, [0,0])
 
 #board matrix
-b=Board()
+board=Board()
 def update_board():
     screen.blit(bg, [0, 0])
     for row in board.array:
