@@ -60,7 +60,7 @@ class Piece:
         self.color = color
         self.x = x
         self.y = y
-        self.move_list = []
+        self.move_set = set()
 
     def line_attack_gen(self,board):
         #vertical lines
@@ -71,7 +71,7 @@ class Piece:
             while(True):
                 newY += i
                 if move_check(self.color,newY,newX,board):
-                    self.move_list.append((newY,newX))
+                    self.move_set.add((newY,newX))
                     if eat_check(self.color,newY,newX,board):
                         break
                 else: # there is an obstruction
@@ -85,7 +85,7 @@ class Piece:
             while(True):
                 newX += i
                 if move_check(self.color,newY,newX,board):
-                    self.move_list.append((newY,newX))
+                    self.move_set.add((newY,newX))
                     if eat_check(self.color,newY,newX,board):
                         break
                 else: # there is an obstruction
@@ -103,7 +103,7 @@ class Piece:
                 newY += offset[1]
 
                 if move_check(self.color,newY,newX,board):
-                    self.move_list.append((newY,newX))
+                    self.move_set.add((newY,newX))
                     if eat_check(self.color,newY,newX,board):
                         break
                 else: # there is an obstruction
@@ -126,12 +126,12 @@ class Pawn(Piece):
         newY = self.y + incr[c]
         # normal move forward
         if newY >=0 and newY <8 and board.array[newY][self.x] == None:
-            self.move_list.append( (newY, self.x) )
+            self.move_set.add( (newY, self.x) )
 
             if (self.y == 1 and c == "b") or (self.y == 6 and c == "w"):
                 newY += incr[c]
                 if newY >=0 and newY <8 and board.array[newY][self.x] == None:
-                    self.move_list.append( (newY, self.x) )
+                    self.move_set.add( (newY, self.x) )
 
 
         for diff in offsets:
@@ -142,10 +142,10 @@ class Pawn(Piece):
                 continue
 
             else:
-                self.move_list.append( (newY,newX))
+                self.move_set.add( (newY,newX))
 
 
-        return self.move_list
+        return self.move_set
 
 class Rook(Piece):
 
@@ -157,7 +157,7 @@ class Rook(Piece):
 
         self.line_attack_gen(board)
 
-        return self.move_list
+        return self.move_set
 
 
 class Bishop(Piece):
@@ -170,7 +170,7 @@ class Bishop(Piece):
 
         self.diag_attack_gen(board)
 
-        return self.move_list
+        return self.move_set
 
 
 class Knight(Piece):
@@ -187,9 +187,9 @@ class Knight(Piece):
             newY = self.y + offset[1]
 
             if move_check(self.color,newY,newX,board):
-                self.move_list.append((newY,newX))
+                self.move_set.add((newY,newX))
 
-        return self.move_list
+        return self.move_set
 
 
 class King(Piece):
@@ -206,9 +206,9 @@ class King(Piece):
             newY = self.y + offset[1]
 
             if move_check(self.color,newY,newX,board):
-                self.move_list.append((newY,newX))
+                self.move_set.add((newY,newX))
 
-        return self.move_list
+        return self.move_set
 
 
 class Queen(Piece):
@@ -222,18 +222,20 @@ class Queen(Piece):
         self.line_attack_gen(board)
         self.diag_attack_gen(board)
 
-        return self.move_list
+        return self.move_set
 
 
 board = Board()
 
 
 #board.array[7][7] = King("w",7,7)
-board.array[2][1] = Queen("w",2,1)
+#board.array[2][1] = Queen("w",2,1)
 
 #board.array[2][2] = Queen("b",2,2)
 
 piece = board.array[1][1]
 #board.array[6][4] = None
 list1 = piece.gen_legal_moves(board)
+hey = set()
+print(hey)
 print(list1)
