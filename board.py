@@ -18,6 +18,7 @@ class Board:
         # Maps (y,x) of a piece to a set containing all the legal moves
         self.whitemoves = dict()
         self.blackmoves = dict()
+        self.pvalue_dict = {King: 200, Queen: 9, Rook: 5, Knight: 3, Bishop: 3, Pawn: 1} # maps piecetype to relative value
 
     def move_piece(self, piece, y, x):
         oldx = piece.x
@@ -29,7 +30,6 @@ class Board:
 
     def move_gen(self):
         # Generates all the legal moves and stores them in whitemoves, blackmoves
-
         for j in range(8):
             for i in range(8):
                 piece = self.array[i][j]
@@ -37,6 +37,7 @@ class Board:
                     self.whitemoves[(i,j)] = piece.gen_legal_moves(board)
                 elif piece != None and piece.color == "b":
                     self.blackmoves[(i,j)] = piece.gen_legal_moves(board)
+
     def test_speed(self):
     # literally ignore this
 
@@ -49,9 +50,35 @@ class Board:
                 self.move_piece(piece,start[0],start[1]) # move it back
 
     # this is not a good place for this function, testing stuff out
-    def check4checkOnW(self,kingy,kingx):
+    # Determine if there's a check on the king of the color inputted
+    def determine_check(self,color,kingy,kingx):
         flag = False
-        for __, attacked in self.blackmoves.items():
-            if (kingy,kingx) in attacked:
-                flag = True
+        if color == "w":
+            for __, attacked in self.blackmoves.items():
+                if (kingy,kingx) in attacked:
+                    flag = True
+        elif color == "b":
+            for __, attacked in self.whitemoves.items():
+                if (kingy,kingx) in attacked:
+                    flag = True
         return flag
+
+    # returns a value for the board state, assuming the AI is black
+    def evaluate(self):
+        score = 0
+        for j in range(8):
+            for i in range(8):
+                piece = self.array[j][i]
+                if piece != None and piece.color == "b":
+                    score += self.pvalue_dict[type(piece)]
+                elif piece != None and piece.color == "w":
+                    score -= self.pvalue_dict[type(piece)]
+        return score
+
+
+
+k = King("b",0,0)
+print(type(k)==King)
+b = Board()
+b.array[0][0] = None
+print(b.evaluate())
