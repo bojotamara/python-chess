@@ -1,7 +1,6 @@
 from pieces import *
 
 class Board:
-
     #None is empty
     def __init__(self):
         # self.array = [[None for x in range(8)] for y in range(8)]
@@ -18,6 +17,7 @@ class Board:
         # Maps (y,x) of a piece to a set containing all the legal moves
         self.whitemoves = dict()
         self.blackmoves = dict()
+        self.score = 0
         self.pvalue_dict = {King: 200, Queen: 9, Rook: 5, Knight: 3, Bishop: 3, Pawn: 1} # maps piecetype to relative value
 
     def move_piece(self, piece, y, x):
@@ -28,19 +28,21 @@ class Board:
         self.array[oldy][oldx] = None
         self.array[y][x] = piece
 
-    def move_gen(self):
+    def move_gen(self,color):
+        moves = dict()
         # Generates all the legal moves and stores them in whitemoves, blackmoves
         for j in range(8):
             for i in range(8):
                 piece = self.array[i][j]
-                if piece != None and piece.color == "w":
-                    self.whitemoves[(i,j)] = piece.gen_legal_moves(board)
-                elif piece != None and piece.color == "b":
-                    self.blackmoves[(i,j)] = piece.gen_legal_moves(board)
+                if piece != None and piece.color == color:
+                    moves[(i,j)] = piece.gen_legal_moves(self)
+        if color == "w":
+            self.whitemoves = moves
+        else:
+            self.blackmoves = moves
 
     def test_speed(self):
     # literally ignore this
-
         for start, move_set in self.whitemoves.items():
             for end in move_set:
                 piece = self.array[start[0]][start[1]]
@@ -65,20 +67,25 @@ class Board:
 
     # returns a value for the board state, assuming the AI is black
     def evaluate(self):
-        score = 0
+        self.score = 0
         for j in range(8):
             for i in range(8):
                 piece = self.array[j][i]
                 if piece != None and piece.color == "b":
-                    score += self.pvalue_dict[type(piece)]
+                    self.score += self.pvalue_dict[type(piece)]
                 elif piece != None and piece.color == "w":
-                    score -= self.pvalue_dict[type(piece)]
-        return score
+                    self.score -= self.pvalue_dict[type(piece)]
+        return self.score
 
 
-
+"""
 k = King("b",0,0)
 print(type(k)==King)
 b = Board()
 b.array[0][0] = None
 print(b.evaluate())
+
+b = Board()
+b.test_speed()
+print("hi")
+"""
