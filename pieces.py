@@ -168,7 +168,7 @@ class Knight(Piece):
 
             if move_check(self.color,newY,newX,board):
                 self.move_set.add((newY,newX))
-
+        
         return self.move_set
 
 

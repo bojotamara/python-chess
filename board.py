@@ -35,11 +35,11 @@ class Board:
             for i in range(8):
                 piece = self.array[i][j]
                 if piece != None and piece.color == color:
-                    moves[(i,j)] = piece.gen_legal_moves(self)
-        if color == "w":
-            self.whitemoves = moves
-        else:
-            self.blackmoves = moves
+                    legal_moves = piece.gen_legal_moves(self)
+                    if legal_moves:
+                        moves[(i,j)] = legal_moves
+    
+        return moves
 
     def test_speed(self):
     # literally ignore this
