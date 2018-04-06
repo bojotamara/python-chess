@@ -36,10 +36,11 @@ class Piece:
         self.color = color
         self.x = x
         self.y = y
-        self.move_set = set()
+
 
     def line_attack_gen(self,board):
         #vertical lines
+        move_set = set()
         newX = self.x
 
         for i in (-1,1):
@@ -47,7 +48,7 @@ class Piece:
             while(True):
                 newY += i
                 if move_check(self.color,newY,newX,board):
-                    self.move_set.add((newY,newX))
+                    move_set.add((newY,newX))
                     if eat_check(self.color,newY,newX,board):
                         break
                 else: # there is an obstruction
@@ -61,13 +62,16 @@ class Piece:
             while(True):
                 newX += i
                 if move_check(self.color,newY,newX,board):
-                    self.move_set.add((newY,newX))
+                    move_set.add((newY,newX))
                     if eat_check(self.color,newY,newX,board):
                         break
                 else: # there is an obstruction
                     break
 
+        return move_set
+
     def diag_attack_gen(self,board):
+        move_set = set()
         increments = [(-1,-1),(1,1),(1,-1),(-1,1)]
 
         for offset in increments:
@@ -79,11 +83,12 @@ class Piece:
                 newY += offset[1]
 
                 if move_check(self.color,newY,newX,board):
-                    self.move_set.add((newY,newX))
+                    move_set.add((newY,newX))
                     if eat_check(self.color,newY,newX,board):
                         break
                 else: # there is an obstruction
                     break
+        return move_set
 
 
 class Pawn(Piece):
@@ -95,6 +100,7 @@ class Pawn(Piece):
 
     # returns a list that contains tuples where the piece can move
     def gen_legal_moves(self, board):
+        move_set = set()
 
         incr = {"w": -1, "b":1}
         offsets = [-1, 1]
@@ -103,12 +109,12 @@ class Pawn(Piece):
         newY = self.y + incr[c]
         # normal move forward
         if newY >=0 and newY <8 and board.array[newY][self.x] == None:
-            self.move_set.add( (newY, self.x) )
+            move_set.add( (newY, self.x) )
 
             if (self.y == 1 and c == "b") or (self.y == 6 and c == "w"):
                 newY += incr[c]
                 if newY >=0 and newY <8 and board.array[newY][self.x] == None:
-                    self.move_set.add( (newY, self.x) )
+                    move_set.add( (newY, self.x) )
 
 
         for diff in offsets:
@@ -119,10 +125,10 @@ class Pawn(Piece):
                 continue
 
             else:
-                self.move_set.add( (newY,newX))
+                move_set.add( (newY,newX))
 
 
-        return self.move_set
+        return move_set
 
 class Rook(Piece):
 
@@ -133,9 +139,7 @@ class Rook(Piece):
 
     def gen_legal_moves(self, board):
 
-        self.line_attack_gen(board)
-
-        return self.move_set
+        return self.line_attack_gen(board)
 
 
 class Bishop(Piece):
@@ -147,9 +151,7 @@ class Bishop(Piece):
 
     def gen_legal_moves(self, board):
 
-        self.diag_attack_gen(board)
-
-        return self.move_set
+        return self.diag_attack_gen(board)
 
 
 class Knight(Piece):
@@ -160,6 +162,7 @@ class Knight(Piece):
         self.symbol = "N"
 
     def gen_legal_moves(self, board):
+        move_set = set()
         offsets = [(-1,-2),(-1,2),(-2,-1),(-2,1),(1,-2),(1,2),(2,-1),(2,1)]
 
         for offset in offsets:
@@ -167,9 +170,9 @@ class Knight(Piece):
             newY = self.y + offset[1]
 
             if move_check(self.color,newY,newX,board):
-                self.move_set.add((newY,newX))
-        
-        return self.move_set
+                move_set.add((newY,newX))
+
+        return move_set
 
 
 class King(Piece):
@@ -180,6 +183,7 @@ class King(Piece):
         self.symbol = "K"
 
     def gen_legal_moves(self, board):
+        move_set = set()
         offsets = [(1,1),(-1,-1),(1,-1),(-1,1),(0,1),(1,0),(-1,0),(0,-1)]
 
         for offset in offsets:
@@ -187,9 +191,9 @@ class King(Piece):
             newY = self.y + offset[1]
 
             if move_check(self.color,newY,newX,board):
-                self.move_set.add((newY,newX))
+                move_set.add((newY,newX))
 
-        return self.move_set
+        return move_set
 
 
 class Queen(Piece):
@@ -201,7 +205,8 @@ class Queen(Piece):
 
     def gen_legal_moves(self, board):
 
-        self.line_attack_gen(board)
-        self.diag_attack_gen(board)
 
-        return self.move_set
+        move_set1 = self.line_attack_gen(board)
+        move_set2 = self.diag_attack_gen(board)
+
+        return move_set1.union(move_set2)

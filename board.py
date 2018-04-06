@@ -15,8 +15,6 @@ class Board:
         [Rook("w",7,0),Knight("w",7,1),Bishop("w",7,2),Queen("w",7,3),King("w",7,4),Bishop("w",7,5),Knight("w",7,6),Rook("w",7,7)]
         ]
         # Maps (y,x) of a piece to a set containing all the legal moves
-        self.whitemoves = dict()
-        self.blackmoves = dict()
         self.score = 0
         self.pvalue_dict = {King: 200, Queen: 9, Rook: 5, Knight: 3, Bishop: 3, Pawn: 1} # maps piecetype to relative value
 
@@ -27,19 +25,6 @@ class Board:
         piece.y = y
         self.array[oldy][oldx] = None
         self.array[y][x] = piece
-
-    def move_gen(self,color):
-        moves = dict()
-        # Generates all the legal moves and stores them in whitemoves, blackmoves
-        for j in range(8):
-            for i in range(8):
-                piece = self.array[i][j]
-                if piece != None and piece.color == color:
-                    legal_moves = piece.gen_legal_moves(self)
-                    if legal_moves:
-                        moves[(i,j)] = legal_moves
-    
-        return moves
 
     def test_speed(self):
     # literally ignore this

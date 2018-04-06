@@ -1,9 +1,21 @@
 from board import *
 from copy import *
 
-def minimax(b, depth, maximizingPlayer):
+def move_gen(board, color):
+    moves = dict()
+    # Generates all the legal moves and stores them in whitemoves, blackmoves
+    for j in range(8):
+        for i in range(8):
+            piece = board.array[i][j]
+            if piece != None and piece.color == color:
+                legal_moves = piece.gen_legal_moves(board)
+                if legal_moves:
+                    moves[(i,j)] = legal_moves
 
-    board = deepcopy(b)
+    return moves
+
+def minimax(board, depth, maximizingPlayer):
+
     board.evaluate()
 
     if depth == 0: #or node is a terminal node
@@ -12,7 +24,7 @@ def minimax(b, depth, maximizingPlayer):
 
     if maximizingPlayer:
         bestValue = float("-inf")
-        black_moves = board.move_gen("b")
+        black_moves = move_gen(board,"b")
         for start, move_set in black_moves.items():
             for end in move_set:
 
@@ -33,7 +45,7 @@ def minimax(b, depth, maximizingPlayer):
 
     else:    #(* minimizing player *)
         bestValue = float("inf")
-        white_moves = board.move_gen("w")
+        white_moves = move_gen(board,"w")
         for start, move_set in white_moves.items():
             for end in move_set:
                 piece = board.array[start[0]][start[1]]
@@ -48,8 +60,9 @@ def minimax(b, depth, maximizingPlayer):
                 bestValue = min(bestValue, v)
         return bestValue, 0
 
-b = Board()
 
+b = Board()
+""
 b.array[2][1] = Pawn("w",2,0)
 
 b.array[2][6] = Rook("w",2,7)
