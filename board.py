@@ -77,6 +77,16 @@ class Board:
                     self.score -= self.pvalue_dict[type(piece)]
         return self.score
 
+    def print_to_terminal(self):
+        for j in range(8):
+            arr = []
+            for thing in self.array[j]:
+                if thing != None:
+                    arr.append(thing.color + thing.symbol)
+                else:
+                    arr.append("--")
+            print(arr)
+
 
 """
 k = King("b",0,0)
