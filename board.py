@@ -26,16 +26,6 @@ class Board:
         self.array[oldy][oldx] = None
         self.array[y][x] = piece
 
-    def test_speed(self):
-    # literally ignore this
-        for start, move_set in self.whitemoves.items():
-            for end in move_set:
-                piece = self.array[start[0]][start[1]]
-                self.move_piece(piece,end[0],end[1]) # move piece
-                #self.evaluate_board()
-                piece = self.array[end[0]][end[1]]
-                self.move_piece(piece,start[0],start[1]) # move it back
-
     # this is not a good place for this function, testing stuff out
     # Determine if there's a check on the king of the color inputted
     def determine_check(self,color,kingy,kingx):
@@ -71,16 +61,3 @@ class Board:
                 else:
                     arr.append("--")
             print(arr)
-
-
-"""
-k = King("b",0,0)
-print(type(k)==King)
-b = Board()
-b.array[0][0] = None
-print(b.evaluate())
-
-b = Board()
-b.test_speed()
-print("hi")
-"""

@@ -12,7 +12,6 @@ def eat_check(your_color, y, x ,board):
         else:
             return False
 
-
 def move_check(your_color, y, x ,board):
 
     if x < 0 or x > 7 or y < 0 or y > 7:
@@ -29,14 +28,12 @@ def move_check(your_color, y, x ,board):
         else:
             return False
 
-
 class Piece:
 
     def __init__(self, color, y, x):
         self.color = color
         self.x = x
         self.y = y
-
 
     def line_attack_gen(self,board):
         #vertical lines
@@ -90,7 +87,6 @@ class Piece:
                     break
         return move_set
 
-
 class Pawn(Piece):
 
     def __init__(self, color, y, x):
@@ -141,7 +137,6 @@ class Rook(Piece):
 
         return self.line_attack_gen(board)
 
-
 class Bishop(Piece):
 
     def __init__(self, color, y, x):
@@ -152,7 +147,6 @@ class Bishop(Piece):
     def gen_legal_moves(self, board):
 
         return self.diag_attack_gen(board)
-
 
 class Knight(Piece):
 
@@ -174,7 +168,6 @@ class Knight(Piece):
 
         return move_set
 
-
 class King(Piece):
 
     def __init__(self, color, y, x):
@@ -194,7 +187,6 @@ class King(Piece):
                 move_set.add((newY,newX))
 
         return move_set
-
 
 class Queen(Piece):
 

@@ -1,5 +1,4 @@
 from board import *
-from copy import *
 
 def move_gen(board, color):
     moves = dict()
@@ -11,10 +10,9 @@ def move_gen(board, color):
                 legal_moves = piece.gen_legal_moves(board)
                 if legal_moves:
                     moves[(i,j)] = legal_moves
-
     return moves
 
-def minimax(board, depth, maximizingPlayer):
+def minimax(board, depth, alpha, beta, maximizingPlayer):
 
     board.evaluate()
 
@@ -28,19 +26,24 @@ def minimax(board, depth, maximizingPlayer):
         for start, move_set in black_moves.items():
             for end in move_set:
 
+                #develop the 'child'
                 piece = board.array[start[0]][start[1]]
                 dest = board.array[end[0]][end[1]]
                 board.move_piece(piece,end[0],end[1])
 
-                v, __ = minimax(board, depth - 1, False)
+                v, __ = minimax(board, depth - 1,alpha,beta, False)
+                bestValue = max(bestValue, v)
+                alpha = max(alpha, bestValue)
+
+                # revert the board
                 piece = board.array[end[0]][end[1]]
                 board.move_piece(piece,start[0],start[1])
                 board.array[end[0]][end[1]] = dest
+                move = (start, (end[0],end[1])) # preserve the move
 
-                if v > bestValue:
-                    bestValue = v
-                    move = (start, (end[0],end[1]))
-                bestValue = max(bestValue, v)
+                if beta <= alpha:
+                    return bestValue, move
+
         return bestValue, move
 
     else:    #(* minimizing player *)
@@ -48,16 +51,24 @@ def minimax(board, depth, maximizingPlayer):
         white_moves = move_gen(board,"w")
         for start, move_set in white_moves.items():
             for end in move_set:
+
+                #DEVELOP the child
                 piece = board.array[start[0]][start[1]]
                 dest = board.array[end[0]][end[1]]
                 board.move_piece(piece,end[0],end[1])
 
-                v, __ = minimax(board, depth - 1, True)
+                v, __ = minimax(board, depth - 1,alpha,beta, True)
+                bestValue = min(v, bestValue)
+                beta = min(beta,bestValue)
+
+                #preserve shit
                 piece = board.array[end[0]][end[1]]
                 board.move_piece(piece,start[0],start[1])
                 board.array[end[0]][end[1]] = dest
 
-                bestValue = min(bestValue, v)
+                if beta <= alpha:
+                    return bestValue, 0
+
         return bestValue, 0
 
 
@@ -85,7 +96,7 @@ self.array =[
 b.print_to_terminal()
 """
 
-value, move = minimax(b,3,True)
+value, move = minimax(b,5,float("-inf"),float("inf"),True)
 print(" ")
 b.print_to_terminal()
 print(value)
