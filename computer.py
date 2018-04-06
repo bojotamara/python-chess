@@ -1,5 +1,10 @@
 from board import *
 
+def matrix_to_tuple(array, empty_array):
+    for i in range(8):
+        empty_array[i] = tuple(array[i])
+    return tuple(empty_array)
+
 def move_gen(board, color):
     moves = dict()
     # Generates all the legal moves and stores them in whitemoves, blackmoves
@@ -12,13 +17,19 @@ def move_gen(board, color):
                     moves[(i,j)] = legal_moves
     return moves
 
-def minimax(board, depth, alpha, beta, maximizingPlayer):
+def minimax(board, depth, alpha, beta, maximizing, trans_table = None):
+    if trans_table == None:
+        trans_table = dict()
+
+    tuple_mat = matrix_to_tuple(board.array,board.empty)
+    if tuple_mat in trans_table:
+        return trans_table[tuple_mat], 0
 
     if depth == 0: # end of the search is reached
-
+        trans_table[tuple_mat] = board.score
         return board.score, 0
 
-    if maximizingPlayer:
+    if maximizing:
         bestValue = float("-inf")
         black_moves = move_gen(board,"b")
         for start, move_set in black_moves.items():
@@ -32,7 +43,7 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
                 if dest != None:
                     board.score += board.pvalue_dict[type(dest)]
 
-                v, __ = minimax(board, depth - 1,alpha,beta, False)
+                v, __ = minimax(board, depth - 1,alpha,beta, False,trans_table)
                 bestValue = max(bestValue, v)
                 alpha = max(alpha, bestValue)
 
@@ -66,7 +77,7 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
                 if dest != None:
                     board.score -= board.pvalue_dict[type(dest)]
 
-                v, __ = minimax(board, depth - 1,alpha,beta, True)
+                v, __ = minimax(board, depth - 1,alpha,beta, True, trans_table)
                 bestValue = min(v, bestValue)
                 beta = min(beta,bestValue)
 
@@ -85,16 +96,34 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
         return bestValue, 0
 
 
-b = Board()
+
+"""
+diction = dict()
+board = Board()
+array = matrix_to_tuple(board.array,board.empty)
+
+
+
+diction[array] = 0
 ""
+b = board
+b.array[0][0] = None
+
+print("")
+
+
+array1 = matrix_to_tuple(b.array,b.empty)
+
+print(array1 in diction)
+
+"""
+b = Board()
 b.array[2][1] = Pawn("w",2,0)
 
 b.array[2][6] = Rook("w",2,7)
 
 b.array[6][0] = None
 b.array[7][7] = None
-
-
 value, move = minimax(b,5,float("-inf"),float("inf"),True)
 print(" ")
 b.print_to_terminal()

@@ -3,7 +3,7 @@ from pieces import *
 class Board:
     #None is empty
     def __init__(self):
-        # self.array = [[None for x in range(8)] for y in range(8)]
+        self.empty = [[None for x in range(8)] for y in range(8)]
         self.array =[
         [Rook("b",0,0),Knight("b",0,1),Bishop("b",0,2),Queen("b",0,3),King("b",0,4),Bishop("b",0,5),Knight("b",0,6),Rook("b",0,7)],
         [Pawn("b",1,i) for i in range(8)],
