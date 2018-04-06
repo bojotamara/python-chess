@@ -40,6 +40,7 @@ class Board:
                     flag = True
         return flag
 
+    # NOT IN USE -- TOO SLOW
     # returns a value for the board state, assuming the AI is black
     def evaluate(self):
         self.score = 0
