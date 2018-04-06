@@ -5,6 +5,8 @@ def matrix_to_tuple(array, empty_array):
         empty_array[i] = tuple(array[i])
     return tuple(empty_array)
 
+# possible improvement: Make a list of all the pieces, so you don't have
+# to iterate through the whole board for move gen
 def move_gen(board, color):
     moves = dict()
     # Generates all the legal moves and stores them in whitemoves, blackmoves
@@ -17,16 +19,14 @@ def move_gen(board, color):
                     moves[(i,j)] = legal_moves
     return moves
 
-def minimax(board, depth, alpha, beta, maximizing, trans_table = None):
-    if trans_table == None:
-        trans_table = dict()
+def minimax(board, depth, alpha, beta, maximizing, memo):
 
-    tuple_mat = matrix_to_tuple(board.array,board.empty)
-    if tuple_mat in trans_table:
-        return trans_table[tuple_mat], 0
+    tuple_mat = matrix_to_tuple(board.array, board.empty)
+    if tuple_mat in memo:
+        return memo[tuple_mat], 0
 
     if depth == 0: # end of the search is reached
-        trans_table[tuple_mat] = board.score
+        memo[tuple_mat] = board.score
         return board.score, 0
 
     if maximizing:
@@ -43,7 +43,7 @@ def minimax(board, depth, alpha, beta, maximizing, trans_table = None):
                 if dest != None:
                     board.score += board.pvalue_dict[type(dest)]
 
-                v, __ = minimax(board, depth - 1,alpha,beta, False,trans_table)
+                v, __ = minimax(board, depth - 1,alpha,beta, False, memo)
                 bestValue = max(bestValue, v)
                 alpha = max(alpha, bestValue)
 
@@ -77,7 +77,7 @@ def minimax(board, depth, alpha, beta, maximizing, trans_table = None):
                 if dest != None:
                     board.score -= board.pvalue_dict[type(dest)]
 
-                v, __ = minimax(board, depth - 1,alpha,beta, True, trans_table)
+                v, __ = minimax(board, depth - 1,alpha,beta, True, memo)
                 bestValue = min(v, bestValue)
                 beta = min(beta,bestValue)
 
@@ -95,36 +95,17 @@ def minimax(board, depth, alpha, beta, maximizing, trans_table = None):
 
         return bestValue, 0
 
-
-
-"""
-diction = dict()
-board = Board()
-array = matrix_to_tuple(board.array,board.empty)
-
-
-
-diction[array] = 0
-""
-b = board
-b.array[0][0] = None
-
-print("")
-
-
-array1 = matrix_to_tuple(b.array,b.empty)
-
-print(array1 in diction)
-
-"""
 b = Board()
-b.array[2][1] = Pawn("w",2,0)
 
-b.array[2][6] = Rook("w",2,7)
+b.array[2][1] = Pawn("w",2,1)
+b.array[2][6] = Rook("w",2,6)
 
 b.array[6][0] = None
 b.array[7][7] = None
-value, move = minimax(b,5,float("-inf"),float("inf"),True)
+
+trans_table = dict()
+value, move = minimax(b,5,float("-inf"),float("inf"),True, trans_table)
+print(len(trans_table))
 print(" ")
 b.print_to_terminal()
 print(value)
