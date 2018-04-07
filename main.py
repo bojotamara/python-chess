@@ -12,21 +12,24 @@ pygame.display.set_caption('Boss Ass Chess Game')
 # load background image
 bg = pygame.image.load("assets/chessboard.png")
 # blit like puts the image on there
-screen.blit(bg, [0, 0])
+# screen.blit(bg, (0, 0))
 
 # wk = pygame.image.load("assets/wking.png")
 # screen.blit(wk, [0,0])
 
 # board matrix
-board = Board()
+b = Board()
+
+# updates the pieces displayed based on the board matrix
 
 
 def update_board():
+    global b
     screen.blit(bg, [0, 0])
-    for row in board.array:
+    for row in b.array:
         for piece in row:
             if piece:  # if piece is not none
-                print(piece)
+                # print(piece)
                 s = pygame.image.load(piece.sprite)
                 pos = (piece.x * 60, piece.y * 60)
                 screen.blit(s, pos)
