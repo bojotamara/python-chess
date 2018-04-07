@@ -3,10 +3,6 @@
 import pygame
 
 
-def eat_check(your_color, y, x, board):
-    piece = board.array[y][x]
-
-
 def capture_check(your_color, y, x, board):
     """
     Checks if a square (y,x) can be captured by the color inputted
@@ -72,7 +68,7 @@ class Piece(pygame.sprite.Sprite):
                 newY += i
                 if move_check(self.color, newY, newX, board):
                     move_set.add((newY, newX))
-                    if eat_check(self.color, newY, newX, board):
+                    if capture_check(self.color, newY, newX, board):
                         break
                 else:  # there is an obstruction
                     break
@@ -86,7 +82,7 @@ class Piece(pygame.sprite.Sprite):
                 newX += i
                 if move_check(self.color, newY, newX, board):
                     move_set.add((newY, newX))
-                    if eat_check(self.color, newY, newX, board):
+                    if capture_check(self.color, newY, newX, board):
                         break
                 else:  # there is an obstruction
                     break
