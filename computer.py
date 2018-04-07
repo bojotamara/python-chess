@@ -104,7 +104,7 @@ b.array[6][0] = None
 b.array[7][7] = None
 
 trans_table = dict()
-value, move = minimax(b,5,float("-inf"),float("inf"),True, trans_table)
+value, move = minimax(b,5,float("-inf"),float("inf"), True, trans_table)
 print(len(trans_table))
 print(" ")
 b.print_to_terminal()
