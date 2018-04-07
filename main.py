@@ -37,23 +37,23 @@ b = Board()
 
 # update_board()
 all_sprites_list = pygame.sprite.Group()
-for row in b.array:
-    for piece in row:
-        if piece:  # if piece is not none
-            all_sprites_list.add(piece)
-# p = Pawn("w", 6, 6)
-# all_sprites_list.add(p)
-all_sprites_list.draw(screen)
+all_sprites_list.add(
+    (piece for row in b.array for piece in row if piece))
+
+# all_sprites_list.draw(screen)
 clock = pygame.time.Clock()
 crashed = False
 
 while not crashed:
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             crashed = True
         # update_board()
         print(event)
 
+    screen.blit(bg, (0, 0))
+    all_sprites_list.draw(screen)
     pygame.display.update()
     clock.tick(60)
 
