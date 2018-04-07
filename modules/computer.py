@@ -1,6 +1,11 @@
 from board import *
 
 def matrix_to_tuple(array, empty_array):
+    """
+    Given a 2D list, converts it to 2D tuple. This is useful for using a
+    matrix as a key in a dictionary
+    (an empty 8x8 should be given, just for efficiency)
+    """
     for i in range(8):
         empty_array[i] = tuple(array[i])
     return tuple(empty_array)
@@ -8,6 +13,11 @@ def matrix_to_tuple(array, empty_array):
 # possible improvement: Make a list of all the pieces, so you don't have
 # to iterate through the whole board for move gen
 def move_gen(board, color):
+    """
+    Generates the legal moves from a board state, for a specific color
+    Return: moves (dict) - maps coord (y,x) to a set containing the coords of
+            where is can legally move
+    """
     moves = dict()
     # Generates all the legal moves and stores them in whitemoves, blackmoves
     for j in range(8):
@@ -20,6 +30,13 @@ def move_gen(board, color):
     return moves
 
 def minimax(board, depth, alpha, beta, maximizing, memo):
+    """
+    Minimax algorithm with alpha-beta pruning determines the best move for
+    black from the current board state.
+    Return: bestValue - score of the board resulting from the best move
+            move - tuple containing the start coord and the end coord of the best move
+            ex. ((y1,x1),(y2,x2)) -> the piece at (y1,x1) should move to (y2,x2)
+    """
 
     tuple_mat = matrix_to_tuple(board.array, board.empty)
     if tuple_mat in memo:
