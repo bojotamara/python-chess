@@ -95,6 +95,7 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
 
         return bestValue, 0
 
+
 b = Board()
 
 b.array[2][1] = Pawn("w",2,1)
