@@ -38,6 +38,9 @@ def move_gen(board, color, attc = False):
                     moves = moves.union(legal_moves)
     return moves
 
+# IF FUNCTION RETURNS value= -INF, AI IS IN CHECKMATE
+# OR move = 0
+# (returning +inf for value MIGHT indicate player checkmate. not sure)
 def minimax(board, depth, alpha, beta, maximizing, memo):
     """
     Minimax algorithm with alpha-beta pruning determines the best move for
@@ -73,7 +76,6 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
                     piece = board.array[end[0]][end[1]]
                     board.move_piece(piece,start[0],start[1])
                     board.array[end[0]][end[1]] = dest
-                    print((start, (end[0],end[1]))) 
                     continue
 
 
