@@ -21,8 +21,7 @@ player = 1  # 'AI' otherwise
 myfont = pygame.font.SysFont(None, 30)
 clippy = pygame.image.load("assets/cpu.jpg").convert()
 clippy = pygame.transform.scale(clippy, (160, 120))
-playeravatar = pygame.image.load("assets/avatar.jpg").convert()
-playeravatar = pygame.transform.scale(playeravatar, (160, 120))
+playeravatar = None
 
 
 # board matrix
@@ -65,7 +64,8 @@ def select_square():
 def run_game():
     # clippy avatar for computer player
     global player, playeravatar, clippy
-
+    playeravatar = pygame.image.load("assets/avatar.jpg").convert()
+    playeravatar = pygame.transform.scale(playeravatar, (160, 120))
     update_sidemenu()
 
     # screen.blit(playeravatar, (550, 20))
