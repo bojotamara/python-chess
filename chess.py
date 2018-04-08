@@ -214,7 +214,49 @@ def camstream():
     return
 
 
+def welcome():
+    menubg = pygame.image.load("assets/menubg.jpg").convert()
+    screen.blit(menubg, (0, 0))
+    bigfont = pygame.font.SysFont(None, 80)
+    textsurface = bigfont.render('Python Chess Game', False, (255, 255, 255))
+    screen.blit(textsurface, (120, 50))
+
+    medfont = pygame.font.SysFont(None, 50)
+    textsurface = medfont.render(
+        'CMPUT 275 Final Project', False, (255, 255, 255))
+    screen.blit(textsurface, (200, 130))
+    textsurface = myfont.render(
+        'Press any key to begin!', False, (255, 255, 255))
+    screen.blit(textsurface, (250, 170))
+
+    arun = pygame.image.load("assets/arun.jpg").convert()
+    tamara = pygame.image.load("assets/tamara.jpg").convert()
+    arun = pygame.transform.scale(arun, (200, 200))
+    tamara = pygame.transform.scale(tamara, (200, 200))
+    screen.blit(arun, (100, 230))
+    screen.blit(tamara, (500, 230))
+
+    textsurface = myfont.render(
+        'Arun Woosaree', False, (255, 255, 255))
+    screen.blit(textsurface, (120, 440))
+
+    textsurface = myfont.render(
+        'Tamara Bojovic', False, (255, 255, 255))
+    screen.blit(textsurface, (520, 440))
+    while True:
+        for event in pygame.event.get():
+            # print(event.type)
+            print(event)
+            if event.type == pygame.KEYUP or event.type == pygame.MOUSEBUTTONUP:
+                return
+            elif event.type == pygame.QUIT:
+                import sys
+                sys.exit()
+        pygame.display.update()
+
+
 if __name__ == "__main__":
+    welcome()
     camstream()
     run_game()
     game_over()
