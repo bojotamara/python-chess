@@ -5,6 +5,7 @@ class Board:
     """
     Board is represented by an 8x8 array. 'None' indicates an empty square.
     """
+
     def __init__(self):
         self.empty = [[None for x in range(8)] for y in range(8)]
         self.array = [
@@ -33,6 +34,7 @@ class Board:
         oldy = piece.y
         piece.x = x
         piece.y = y
+        piece.rect = x * 60, y * 60
         self.array[oldy][oldx] = None
         self.array[y][x] = piece
 
