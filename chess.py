@@ -1,6 +1,7 @@
 # ------------- INITIALIZATIONS-------------------
 import pygame
 import copy
+import textwrap
 
 # from assets import **
 
@@ -21,7 +22,7 @@ sidebg = pygame.image.load("assets/woodsidemenu.jpg").convert()
 player = 1  # 'AI' otherwise
 myfont = pygame.font.Font("assets/Roboto-Black.ttf", 30)
 clippy = pygame.image.load("assets/cpu.jpg").convert()
-clippy = pygame.transform.scale(clippy, (160, 120))
+clippy = pygame.transform.scale(clippy, (320, 240))
 playeravatar = None
 
 
@@ -61,11 +62,16 @@ def select_square():
     y = y // 60
     return (y, x)
 
+
+def determine_check(board, color, attacked):
+    pass
+
+
 def run_game():
     # clippy avatar for computer player
     global player, playeravatar, clippy
     playeravatar = pygame.image.load("assets/avatar.jpg").convert()
-    playeravatar = pygame.transform.scale(playeravatar, (160, 120))
+    playeravatar = pygame.transform.scale(playeravatar, (320, 240))
     update_sidemenu('Your Turn!', (255, 255, 255))
 
     # screen.blit(playeravatar, (550, 20))
@@ -139,15 +145,13 @@ def run_game():
 
         # AI's turn
         else:
-            value, move = minimax(board,3,float("-inf"),float("inf"), True, trans_table, sprites, screen)
-            print(value, move)
-            if value == float("-inf"):
+            value, move = minimax(board, 3, float(
+                "-inf"), float("inf"), True, trans_table, sprites, screen)
+
+            if value == float("-inf") or move == 0:
                 print(value)
                 print(move)
-                pygame.image.save(screen,"screen.jpg")
-                print("AI checkmate")
-                #AI IS IN CHECKMATE
-
+                # AI IS IN CHECKMATE
                 gameover = True
             else:
                 start = move[0]
@@ -160,11 +164,10 @@ def run_game():
                     sprites.remove(dest)
                     board.score += board.pvalue_dict[type(dest)]
                 player = 1
-
-            if value == float("inf"):
-                print("Player checkmate")
-                gameover = True
-                update_sidemenu('Your Turn!', (255, 255, 255))
+                # TODO
+                update_sidemenu('abcdefghijklmnopqrstuvwxyz', (255, 255, 255))
+                print(board.score)
+                # print('SIDE MENU UPDATE')
 
         screen.blit(bg, (0, 0))
         all_sprites_list.draw(screen)
@@ -173,7 +176,6 @@ def run_game():
 
 
 def game_over():
-    pygame.image.save(screen,"screen.jpg")
     board.print_to_terminal()
 
 
@@ -181,13 +183,13 @@ def update_sidemenu(message, colour):
     screen.blit(sidebg, (480, 0))
     global playeravatar, clippy
     if player == 1:
-        screen.blit(playeravatar, (550, 20))
+        screen.blit(playeravatar, (480, 0))
 
     elif player == 'AI':
-        screen.blit(clippy, (550, 20))
+        screen.blit(clippy, (480, 0))
 
     textsurface = myfont.render(message, False, colour)
-    screen.blit(textsurface, (550, 150))
+    screen.blit(textsurface, (500, 250))
 
 
 def camstream():
