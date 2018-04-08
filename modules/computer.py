@@ -12,7 +12,7 @@ def matrix_to_tuple(array, empty_array):
 
 # possible improvement: Make a list of all the pieces, so you don't have
 # to iterate through the whole board for move gen
-def move_gen(board, color, attc = False):
+def move_gen(board, color, sprites, attc = False):
     """
     Generates the legal moves from a board state, for a specific color.
     Return:
@@ -25,6 +25,7 @@ def move_gen(board, color, attc = False):
     else:
         moves = dict()
     # Generates all the legal moves and stores them in whitemoves, blackmoves
+    '''
     for j in range(8):
         for i in range(8):
             piece = board.array[i][j]
@@ -36,12 +37,22 @@ def move_gen(board, color, attc = False):
                     #print('hey')
                     #print(legal_moves)
                     moves = moves.union(legal_moves)
+    '''
+    for piece in sprites:
+            if piece.color == color:
+                legal_moves = piece.gen_legal_moves(board)
+                if legal_moves and not attc:
+                    moves[(piece.y,piece.x)] = legal_moves
+                elif legal_moves and attc:
+                    #print('hey')
+                    #print(legal_moves)
+                    moves = moves.union(legal_moves)
     return moves
 
 # IF FUNCTION RETURNS value= -INF, AI IS IN CHECKMATE
 # OR move = 0
 # (returning +inf for value MIGHT indicate player checkmate. not sure)
-def minimax(board, depth, alpha, beta, maximizing, memo):
+def minimax(board, depth, alpha, beta, maximizing, memo, sprites):
     """
     Minimax algorithm with alpha-beta pruning determines the best move for
     black from the current board state.
@@ -60,7 +71,7 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
 
     if maximizing:
         bestValue = float("-inf")
-        black_moves = move_gen(board,"b")
+        black_moves = move_gen(board,"b",sprites)
         for start, move_set in black_moves.items():
             for end in move_set:
 
@@ -68,14 +79,18 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
                 piece = board.array[start[0]][start[1]]
                 dest = board.array[end[0]][end[1]]
                 board.move_piece(piece,end[0],end[1])
+                if dest:
+                    sprites.remove(dest)
 
                 # see if the move puts you in check
-                attacked = move_gen(board,"w",True) #return spaces attacked by white
+                attacked = move_gen(board,"w",sprites,True) #return spaces attacked by white
 
                 if (board.black_king.y,board.black_king.x) in attacked:
                     piece = board.array[end[0]][end[1]]
                     board.move_piece(piece,start[0],start[1])
                     board.array[end[0]][end[1]] = dest
+                    if dest:
+                        sprites.append(dest)
                     continue
 
 
@@ -83,13 +98,15 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
                 if dest != None:
                     board.score += board.pvalue_dict[type(dest)]
 
-                v, __ = minimax(board, depth - 1,alpha,beta, False, memo)
+                v, __ = minimax(board, depth - 1,alpha,beta, False, memo, sprites)
 
 
                 # revert the board
                 piece = board.array[end[0]][end[1]]
                 board.move_piece(piece,start[0],start[1])
                 board.array[end[0]][end[1]] = dest
+                if dest:
+                    sprites.append(dest)
                 if v > bestValue:
 
                     move = (start, (end[0],end[1])) # preserve the move
@@ -110,7 +127,7 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
 
     else:    #(* minimizing player *)
         bestValue = float("inf")
-        white_moves = move_gen(board,"w")
+        white_moves = move_gen(board,"w",sprites)
         for start, move_set in white_moves.items():
             for end in move_set:
 
@@ -118,14 +135,18 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
                 piece = board.array[start[0]][start[1]]
                 dest = board.array[end[0]][end[1]]
                 board.move_piece(piece,end[0],end[1])
+                if dest:
+                    sprites.remove(dest)
 
                 # see if the move puts your in check
-                attacked = move_gen(board,"b",True) #return spaces attacked by white
+                attacked = move_gen(board,"b",sprites,True) #return spaces attacked by white
 
                 if (board.white_king.y,board.white_king.x) in attacked:
                     piece = board.array[end[0]][end[1]]
                     board.move_piece(piece,start[0],start[1])
                     board.array[end[0]][end[1]] = dest
+                    if dest:
+                        sprites.append(dest)
                     continue
 
 
@@ -133,7 +154,7 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
                 if dest != None:
                     board.score -= board.pvalue_dict[type(dest)]
 
-                v, __ = minimax(board, depth - 1,alpha,beta, True, memo)
+                v, __ = minimax(board, depth - 1,alpha,beta, True, memo, sprites)
                 bestValue = min(v, bestValue)
                 beta = min(beta,bestValue)
 
@@ -141,6 +162,8 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
                 piece = board.array[end[0]][end[1]]
                 board.move_piece(piece,start[0],start[1])
                 board.array[end[0]][end[1]] = dest
+                if dest:
+                    sprites.append(dest)
 
                 # revert the score
                 if dest != None:

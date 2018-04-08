@@ -1,5 +1,6 @@
 #------------- INITIALIZATIONS-------------------
 import pygame
+import copy
 
 # from assets import **
 
@@ -52,6 +53,8 @@ def select_square():
     y = y // 60
     return (y, x)
 
+def determine_check(board, color, attacked):
+
 def run_game():
     gameover = False
     player = 1  # 'AI' otherwise
@@ -70,7 +73,7 @@ def run_game():
                 # select a piece to move
                 elif event.type == pygame.MOUSEBUTTONDOWN and not selected:
                     piece = select_piece("w")
-                    print(piece)
+                    #print(piece)
                     # a white piece was selected
                     if piece != None:
                         player_moves = piece.gen_legal_moves(board)
@@ -84,19 +87,25 @@ def run_game():
                         oldy = piece.y
                         dest = board.array[square[0]][square[1]]
                         board.move_piece(piece, square[0], square[1])
+                        if dest:
+                            all_sprites_list.remove(dest)
+                            sprites.remove(dest)
                         # see if move puts you in check
-                        attacked = move_gen(board, "b", True)
+                        attacked = move_gen(board, "b",sprites, True)
                         if (board.white_king.y, board.white_king.x) not in attacked:
                             # MOVE NOT IN CHECK WE GOOD
                             selected = False
                             player = "AI"
                             # delete sprite
                             if dest:
-                                all_sprites_list.remove(dest)
-                                sprites.remove(dest)
+                                board.score -= board.pvalue_dict[type(dest)]
                         else:  # THIS MOVE IS IN CHECK
                             board.move_piece(piece, oldy, oldx)
                             board.array[square[0]][square[1]] = dest
+                            if dest:
+                                all_sprites_list.add(dest)
+                                sprites.append(dest)
+                            piece.highlight()
                             # TODO: print a message
 
                     elif (piece.y, piece.x) == square:  # CANCEL MOVE
@@ -109,20 +118,35 @@ def run_game():
 
         # AI's turn
         else:
-            """
-            value, move = minimax(board,5,float("-inf"),float("inf"), True, trans_table)
-            if value == float("-inf"):
+            value, move = minimax(board,3,float("-inf"),float("inf"), True, trans_table, sprites)
+
+            if value == float("-inf") or move == 0:
+                print(value)
+                print(move)
                 #AI IS IN CHECKMATE
                 gameover = True
-            """
-            # just go back to player one for now lol
-            player = 1
+            else:
+                start = move[0]
+                end = move[1]
+                piece = board.array[start[0]][start[1]]
+                dest = board.array[end[0]][end[1]]
+                board.move_piece(piece, end[0], end[1])
+                if dest:
+                    all_sprites_list.remove(dest)
+                    sprites.remove(dest)
+                    board.score += board.pvalue_dict[type(dest)]
+                player = 1
+                print(board.score)
+
 
         screen.blit(bg, (0, 0))
         all_sprites_list.draw(screen)
         pygame.display.update()
         clock.tick(60)
 
+def game_over():
+    board.print_to_terminal()
 if __name__ == "__main__":
 
     run_game()
+    game_over()
