@@ -34,6 +34,7 @@ def move_check(your_color, y, x, board):
             return False
 
 
+# class Piece(pygame.sprite.DirtySprite):
 class Piece(pygame.sprite.Sprite):
     """
     Piece in the chess game. Stores the color and the position in the board
@@ -48,7 +49,11 @@ class Piece(pygame.sprite.Sprite):
         self.image.convert_alpha()
         # self.image.fill((0, 255, 0))
         # self.image.set_colorkey((0, 255, 0))
-        self.rect = x * 60, y * 60
+        # self.rect = x * 60, y * 60
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = x * 60, y * 60
+        # print(self.rect)
+        self.highlighed = False
 
     def line_attack_gen(self, board):
         """
@@ -115,6 +120,17 @@ class Piece(pygame.sprite.Sprite):
                 else:  # there is an obstruction, later moves aren't valid
                     break
         return move_set
+
+    # def update_pos():
+    #     self.rect = self.x * 60, self.y * 60
+    def highlight(self):
+        pygame.draw.rect(self.image, (138, 43, 226), (0, 0, 60, 60),  5)
+        self.highlighed = not self.highlighed
+
+    def unhighlight(self):
+        # TODO
+        self.image.blit(self.sprite, (0, 0))
+        self.highlighed = not self.highlighed
 
 
 class Pawn(Piece):

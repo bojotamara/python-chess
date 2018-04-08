@@ -1,61 +1,65 @@
 #!/usr/bin/python3
-import pygame
 
-# from assets import *
-from modules.board import *
+if __name__ == "__main__":
+    import pygame
 
-# pygame.init()
+    # from assets import *
+    from modules.board import *
 
-screen = pygame.display.set_mode((800, 60 * 8))
-pygame.display.set_caption('Boss Ass Chess Game')
+    pygame.init()
 
-# load background image
-bg = pygame.image.load("assets/chessboard.png")
-# blit like puts the image on there
-screen.blit(bg, (0, 0))
+    screen = pygame.display.set_mode((800, 60 * 8))
+    pygame.display.set_caption('Boss Ass Chess Game')
 
-# wk = pygame.image.load("assets/wking.png")
-# screen.blit(wk, [0,0])
+    # load background image
+    bg = pygame.image.load("assets/chessboard.png").convert()
+    # blit like puts the image on there
 
-# board matrix
-b = Board()
+    # board matrix
+    b = Board()
 
-# updates the pieces displayed based on the board matrix
-
-
-# def update_board():
-#     global b
-#     screen.blit(bg, [0, 0])
-#     for row in b.array:
-#         for piece in row:
-#             if piece:  # if piece is not none
-#                 # print(piece)
-#                 s = pygame.image.load(piece.sprite)
-#                 pos = (piece.x * 60, piece.y * 60)
-#                 screen.blit(s, pos)
-
-
-# update_board()
-all_sprites_list = pygame.sprite.Group()
-all_sprites_list.add(piece for row in b.array for piece in row if piece)
-
-# all_sprites_list.draw(screen)
-clock = pygame.time.Clock()
-crashed = False
-
-while not crashed:
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            crashed = True
-        # update_board()
-        print(event)
+    all_sprites_list = pygame.sprite.Group()
+    all_sprites_list.add(piece for row in b.array for piece in row if piece)
 
     screen.blit(bg, (0, 0))
     all_sprites_list.draw(screen)
-    pygame.display.update()
-    clock.tick(60)
+    # all_sprites_list = pygame.sprite.LayeredDirty(
+    #     piece for row in b.array for piece in row if piece)
+    sprites = [piece for row in b.array for piece in row if piece]
+    clock = pygame.time.Clock()
+    crashed = False
 
-#
-# if __name__ == "__main__":
-#     b = Board()
+    while not crashed:
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                crashed = True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                # get a list of all sprites that are under the mouse cursor
+                clicked_sprites = [
+                    s for s in sprites if s.rect.collidepoint(pos)]
+
+                if len(clicked_sprites) == 1:
+                    # clicked_sprites[0].highlight(screen)
+                    clicked_sprites[0].highlight()
+
+            # elif event.type == pygame.MOUSEBUTTONUP:
+            #     pos = pygame.mouse.get_pos()
+            #     # get a list of all sprites that are under the mouse cursor
+            #     clicked_sprites = [
+            #         s for s in sprites if s.rect.collidepoint(pos)]
+            #     if len(clicked_sprites) == 1:
+            #         # clicked_sprites[0].highlight(screen)
+            #         clicked_sprites[0].unhighlight()
+            #         # clicked_sprites[0].unhighlight()
+            #         # elif:
+            #         #     crashed = True
+            #         #     print('SOMETHING DEADASS BROKE')
+
+            print(event)
+
+        screen.blit(bg, (0, 0))
+        all_sprites_list.draw(screen)
+        pygame.display.update()
+        clock.tick(60)
