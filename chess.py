@@ -19,7 +19,7 @@ from modules.computer import *
 bg = pygame.image.load("assets/chessboard.png").convert()
 sidebg = pygame.image.load("assets/woodsidemenu.jpg").convert()
 player = 1  # 'AI' otherwise
-myfont = pygame.font.SysFont(None, 30)
+myfont = pygame.font.Font("assets/Roboto-Black.ttf", 30)
 clippy = pygame.image.load("assets/cpu.jpg").convert()
 clippy = pygame.transform.scale(clippy, (160, 120))
 playeravatar = None
@@ -214,7 +214,49 @@ def camstream():
     return
 
 
+def welcome():
+    menubg = pygame.image.load("assets/menubg.jpg").convert()
+    screen.blit(menubg, (0, 0))
+    bigfont = pygame.font.Font("assets/Roboto-Black.ttf", 80)
+    textsurface = bigfont.render('Python Chess Game', False, (255, 255, 255))
+    screen.blit(textsurface, (30, 10))
+
+    medfont = pygame.font.Font("assets/Roboto-Black.ttf", 50)
+    textsurface = medfont.render(
+        'CMPUT 275 Final Project', False, (255, 255, 255))
+    screen.blit(textsurface, (100, 100))
+    textsurface = myfont.render(
+        'Press any key to begin!', False, (255, 255, 255))
+    screen.blit(textsurface, (250, 170))
+
+    arun = pygame.image.load("assets/arun.jpg").convert()
+    tamara = pygame.image.load("assets/tamara.jpg").convert()
+    arun = pygame.transform.scale(arun, (200, 200))
+    tamara = pygame.transform.scale(tamara, (200, 200))
+    screen.blit(arun, (100, 230))
+    screen.blit(tamara, (500, 230))
+
+    textsurface = myfont.render(
+        'Arun Woosaree', False, (255, 255, 255))
+    screen.blit(textsurface, (100, 440))
+
+    textsurface = myfont.render(
+        'Tamara Bojovic', False, (255, 255, 255))
+    screen.blit(textsurface, (500, 440))
+    while True:
+        for event in pygame.event.get():
+            # print(event.type)
+            print(event)
+            if event.type == pygame.KEYUP or event.type == pygame.MOUSEBUTTONUP:
+                return
+            elif event.type == pygame.QUIT:
+                import sys
+                sys.exit()
+        pygame.display.update()
+
+
 if __name__ == "__main__":
+    welcome()
     camstream()
     run_game()
     game_over()
