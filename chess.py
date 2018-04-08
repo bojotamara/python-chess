@@ -1,4 +1,35 @@
-#!/usr/bin/python3
+#------------- INITIALIZATIONS-------------------
+import pygame
+
+# from assets import **
+
+pygame.init()
+
+screen = pygame.display.set_mode((800, 60 * 8))
+pygame.display.set_caption('Boss Ass Chess Game')
+
+from modules.board import *
+from modules.computer import *
+
+# load background image
+bg = pygame.image.load("assets/chessboard.png").convert()
+# blit like puts the image on there
+
+# board matrix
+board = Board()
+
+all_sprites_list = pygame.sprite.Group()
+sprites = [piece for row in board.array for piece in row if piece]
+all_sprites_list.add(sprites)
+
+screen.blit(bg, (0, 0))
+all_sprites_list.draw(screen)
+# all_sprites_list = pygame.sprite.LayeredDirty(
+#     piece for row in b.array for piece in row if piece)
+
+clock = pygame.time.Clock()
+
+#----------- FUNCTIONS---------------------------------
 
 
 def select_piece(color):
@@ -21,38 +52,7 @@ def select_square():
     y = y // 60
     return (y, x)
 
-
-if __name__ == "__main__":
-    import pygame
-
-    # from assets import **
-
-    pygame.init()
-
-    screen = pygame.display.set_mode((800, 60 * 8))
-    pygame.display.set_caption('Boss Ass Chess Game')
-
-    from modules.board import *
-    from modules.computer import *
-
-    # load background image
-    bg = pygame.image.load("assets/chessboard.png").convert()
-    # blit like puts the image on there
-
-    # board matrix
-    board = Board()
-
-    all_sprites_list = pygame.sprite.Group()
-    sprites = [piece for row in board.array for piece in row if piece]
-    all_sprites_list.add(sprites)
-
-    screen.blit(bg, (0, 0))
-    all_sprites_list.draw(screen)
-    # all_sprites_list = pygame.sprite.LayeredDirty(
-    #     piece for row in b.array for piece in row if piece)
-
-    clock = pygame.time.Clock()
-
+def run_game():
     gameover = False
     player = 1  # 'AI' otherwise
 
@@ -118,22 +118,11 @@ if __name__ == "__main__":
             # just go back to player one for now lol
             player = 1
 
-            # elif event.type == pygame.MOUSEBUTTONUP:
-            #     pos = pygame.mouse.get_pos()
-            #     # get a list of all sprites that are under the mouse cursor
-            #     clicked_sprites = [
-            #         s for s in sprites if s.rect.collidepoint(pos)]
-            #     if len(clicked_sprites) == 1:
-            #         # clicked_sprites[0].highlight(screen)
-            #         clicked_sprites[0].unhighlight()
-            #         # clicked_sprites[0].unhighlight()
-            #         # elif:
-            #         #     crashed = True
-            #         #     print('SOMETHING DEADASS BROKE')
-
-        # print(event)
-
         screen.blit(bg, (0, 0))
         all_sprites_list.draw(screen)
         pygame.display.update()
         clock.tick(60)
+
+if __name__ == "__main__":
+
+    run_game()
