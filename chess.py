@@ -37,8 +37,7 @@ b = Board()
 
 # update_board()
 all_sprites_list = pygame.sprite.Group()
-all_sprites_list.add(
-    (piece for row in b.array for piece in row if piece))
+all_sprites_list.add(piece for row in b.array for piece in row if piece)
 
 # all_sprites_list.draw(screen)
 clock = pygame.time.Clock()
