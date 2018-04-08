@@ -14,9 +14,11 @@ def matrix_to_tuple(array, empty_array):
 # to iterate through the whole board for move gen
 def move_gen(board, color, attc = False):
     """
-    Generates the legal moves from a board state, for a specific color
-    Return: moves (dict) - maps coord (y,x) to a set containing the coords of
-            where is can legally move
+    Generates the legal moves from a board state, for a specific color.
+    Return:
+    attc = False: moves (dict) - maps coord (y,x) to a set containing the coords of
+                                where is can legally move
+    attc = True: moves (set) - the set of attacked squares for that color.
     """
     if attc:
         moves = set()
@@ -35,9 +37,6 @@ def move_gen(board, color, attc = False):
                     #print(legal_moves)
                     moves = moves.union(legal_moves)
     return moves
-
-def make_move():
-    pass
 
 def minimax(board, depth, alpha, beta, maximizing, memo):
     """
@@ -67,27 +66,34 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
                 dest = board.array[end[0]][end[1]]
                 board.move_piece(piece,end[0],end[1])
 
-                # see if the move puts your in check
+                # see if the move puts you in check
                 attacked = move_gen(board,"w",True) #return spaces attacked by white
+
                 if (board.black_king.y,board.black_king.x) in attacked:
                     piece = board.array[end[0]][end[1]]
                     board.move_piece(piece,start[0],start[1])
                     board.array[end[0]][end[1]] = dest
+                    print((start, (end[0],end[1]))) 
                     continue
+
 
                 #change the board score
                 if dest != None:
                     board.score += board.pvalue_dict[type(dest)]
 
                 v, __ = minimax(board, depth - 1,alpha,beta, False, memo)
-                bestValue = max(bestValue, v)
-                alpha = max(alpha, bestValue)
+
 
                 # revert the board
                 piece = board.array[end[0]][end[1]]
                 board.move_piece(piece,start[0],start[1])
                 board.array[end[0]][end[1]] = dest
-                move = (start, (end[0],end[1])) # preserve the move
+                if v > bestValue:
+
+                    move = (start, (end[0],end[1])) # preserve the move
+
+                bestValue = max(bestValue, v)
+                alpha = max(alpha, bestValue)
 
                 #revert the score
                 if dest != None:
@@ -95,8 +101,10 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
 
                 if beta <= alpha:
                     return bestValue, move
-
-        return bestValue, move
+        try:
+            return bestValue, move
+        except:
+            return bestValue, 0
 
     else:    #(* minimizing player *)
         bestValue = float("inf")
@@ -111,11 +119,13 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
 
                 # see if the move puts your in check
                 attacked = move_gen(board,"b",True) #return spaces attacked by white
+
                 if (board.white_king.y,board.white_king.x) in attacked:
                     piece = board.array[end[0]][end[1]]
                     board.move_piece(piece,start[0],start[1])
                     board.array[end[0]][end[1]] = dest
                     continue
+
 
                 #update the score
                 if dest != None:
