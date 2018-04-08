@@ -63,6 +63,7 @@ def select_square():
 
 
 def determine_check(board, color, attacked):
+    pass
 
 
 def run_game():
@@ -70,7 +71,7 @@ def run_game():
     global player, playeravatar, clippy
     playeravatar = pygame.image.load("assets/avatar.jpg").convert()
     playeravatar = pygame.transform.scale(playeravatar, (160, 120))
-    update_sidemenu()
+    update_sidemenu('Your Turn!', (255, 255, 255))
 
     # screen.blit(playeravatar, (550, 20))
 
@@ -114,7 +115,8 @@ def run_game():
                             selected = False
                             player = "AI"
                             # update avatar
-                            update_sidemenu()
+                            update_sidemenu('CPU Thinking...', (255, 255, 255))
+
                             # delete sprite
                             if dest:
                                 board.score -= board.pvalue_dict[type(dest)]
@@ -125,15 +127,20 @@ def run_game():
                                 all_sprites_list.add(dest)
                                 sprites.append(dest)
                             piece.highlight()
-                            # TODO: print a message
+                            # TODO: print a message player is in check
+                            update_sidemenu('Check!', (255, 0, 0))
 
                     elif (piece.y, piece.x) == square:  # CANCEL MOVE
                         piece.unhighlight()
                         selected = False
 
                     else:  # INVALID MOVE
-                        pass
+
                         # TODO: print a message
+                        update_sidemenu('Invalid move!', (255, 0, 0))
+                        pygame.display.update()
+                        pygame.time.wait(1000)
+                        update_sidemenu('Your turn!', (255, 255, 255))
 
         # AI's turn
         else:
@@ -156,7 +163,7 @@ def run_game():
                     sprites.remove(dest)
                     board.score += board.pvalue_dict[type(dest)]
                 player = 1
-                update_sidemenu()
+                update_sidemenu('Your Turn!', (255, 255, 255))
                 print(board.score)
 
         screen.blit(bg, (0, 0))
@@ -169,15 +176,16 @@ def game_over():
     board.print_to_terminal()
 
 
-def update_sidemenu():
+def update_sidemenu(message, colour):
     screen.blit(sidebg, (480, 0))
     global playeravatar, clippy
     if player == 1:
         screen.blit(playeravatar, (550, 20))
-        textsurface = myfont.render('Your Turn!', False, (255, 255, 255))
+
     elif player == 'AI':
         screen.blit(clippy, (550, 20))
-        textsurface = myfont.render('CPU Thinking...', False, (255, 255, 255))
+
+    textsurface = myfont.render(message, False, colour)
     screen.blit(textsurface, (550, 150))
 
 
