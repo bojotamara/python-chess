@@ -52,7 +52,7 @@ def move_gen(board, color, sprites, attc = False):
 # IF FUNCTION RETURNS value= -INF, AI IS IN CHECKMATE
 # OR move = 0
 # (returning +inf for value MIGHT indicate player checkmate. not sure)
-def minimax(board, depth, alpha, beta, maximizing, memo, sprites):
+def minimax(board, depth, alpha, beta, maximizing, memo, sprites ,screen):
     """
     Minimax algorithm with alpha-beta pruning determines the best move for
     black from the current board state.
@@ -62,7 +62,7 @@ def minimax(board, depth, alpha, beta, maximizing, memo, sprites):
     """
 
     tuple_mat = matrix_to_tuple(board.array, board.empty)
-    if tuple_mat in memo:
+    if tuple_mat in memo and depth != 3: # set this to the depth of the initial call
         return memo[tuple_mat], 0
 
     if depth == 0: # end of the search is reached
@@ -98,7 +98,7 @@ def minimax(board, depth, alpha, beta, maximizing, memo, sprites):
                 if dest != None:
                     board.score += board.pvalue_dict[type(dest)]
 
-                v, __ = minimax(board, depth - 1,alpha,beta, False, memo, sprites)
+                v, __ = minimax(board, depth - 1,alpha,beta, False, memo, sprites, screen)
 
 
                 # revert the board
@@ -107,7 +107,7 @@ def minimax(board, depth, alpha, beta, maximizing, memo, sprites):
                 board.array[end[0]][end[1]] = dest
                 if dest:
                     sprites.append(dest)
-                if v > bestValue:
+                if v >= bestValue:
 
                     move = (start, (end[0],end[1])) # preserve the move
 
@@ -124,6 +124,12 @@ def minimax(board, depth, alpha, beta, maximizing, memo, sprites):
             return bestValue, move
         except:
             return bestValue, 0
+            #pygame.image.save(screen,"screen.jpg")
+            #print(bestValue)
+            #board.print_to_terminal()
+            #raise ValueError("Hey somethings wrong")
+
+
 
     else:    #(* minimizing player *)
         bestValue = float("inf")
@@ -154,7 +160,7 @@ def minimax(board, depth, alpha, beta, maximizing, memo, sprites):
                 if dest != None:
                     board.score -= board.pvalue_dict[type(dest)]
 
-                v, __ = minimax(board, depth - 1,alpha,beta, True, memo, sprites)
+                v, __ = minimax(board, depth - 1,alpha,beta, True, memo, sprites, screen)
                 bestValue = min(v, bestValue)
                 beta = min(beta,bestValue)
 
@@ -185,7 +191,7 @@ if __name__ == "__main__":
     b.array[7][7] = None
 
     trans_table = dict()
-    value, move = minimax(b,5,float("-inf"),float("inf"), True, trans_table)
+    value, move = minimax(b,5,float("-inf"),float("inf"), True, trans_table, screen)
     print(len(trans_table))
     print(" ")
     b.print_to_terminal()

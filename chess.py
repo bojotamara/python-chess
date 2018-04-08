@@ -61,11 +61,6 @@ def select_square():
     y = y // 60
     return (y, x)
 
-
-def determine_check(board, color, attacked):
-    pass
-
-
 def run_game():
     # clippy avatar for computer player
     global player, playeravatar, clippy
@@ -144,13 +139,15 @@ def run_game():
 
         # AI's turn
         else:
-            value, move = minimax(board, 3, float(
-                "-inf"), float("inf"), True, trans_table, sprites)
-
-            if value == float("-inf") or move == 0:
+            value, move = minimax(board,3,float("-inf"),float("inf"), True, trans_table, sprites, screen)
+            print(value, move)
+            if value == float("-inf"):
                 print(value)
                 print(move)
-                # AI IS IN CHECKMATE
+                pygame.image.save(screen,"screen.jpg")
+                print("AI checkmate")
+                #AI IS IN CHECKMATE
+
                 gameover = True
             else:
                 start = move[0]
@@ -163,8 +160,11 @@ def run_game():
                     sprites.remove(dest)
                     board.score += board.pvalue_dict[type(dest)]
                 player = 1
+
+            if value == float("inf"):
+                print("Player checkmate")
+                gameover = True
                 update_sidemenu('Your Turn!', (255, 255, 255))
-                print(board.score)
 
         screen.blit(bg, (0, 0))
         all_sprites_list.draw(screen)
@@ -173,6 +173,7 @@ def run_game():
 
 
 def game_over():
+    pygame.image.save(screen,"screen.jpg")
     board.print_to_terminal()
 
 
