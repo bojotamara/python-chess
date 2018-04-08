@@ -1,13 +1,12 @@
 #!/usr/bin/python3
 
 def select_piece(color):
-
     pos = pygame.mouse.get_pos()
     # get a list of all sprites that are under the mouse cursor
     clicked_sprites = [
         s for s in sprites if s.rect.collidepoint(pos)]
 
-    #only highlight if its the player's color
+    #only highlight, and return if its the player's piece
     if len(clicked_sprites) == 1 and clicked_sprites[0].color == color :
         # clicked_sprites[0].highlight(screen)
         #print(clicked_sprites[0])
@@ -54,7 +53,7 @@ if __name__ == "__main__":
 
 
     gameover = False
-    player = 1 # 'CMP' otherwise
+    player = 1 # 'AI' otherwise
 
     selected = False #indicates whether a piece is selected yet
     trans_table = dict()
@@ -67,6 +66,7 @@ if __name__ == "__main__":
                 if event.type == pygame.QUIT:
                     gameover = True
 
+                # select a piece to move
                 elif event.type == pygame.MOUSEBUTTONDOWN and not selected:
                     piece = select_piece("w")
                     print(piece)
@@ -75,9 +75,13 @@ if __name__ == "__main__":
                         player_moves = piece.gen_legal_moves(board)
                         selected = True
 
+                # piece is selected, now move it somewhere
                 elif event.type == pygame.MOUSEBUTTONDOWN and selected:
                     square = select_square()
                     if square in player_moves:
+                        oldx = piece.x # preserve, in case we have to reverse the move
+                        oldy = piece.y
+                        dest = board.array[square[0]][square[1]]
                         board.move_piece(piece,square[0],square[1])
                         # see if move puts you in check
                         attacked = move_gen(board,"b",True)
@@ -86,8 +90,8 @@ if __name__ == "__main__":
                             selected = False
                             player = "AI"
                         else: #THIS MOVE IS IN CHECK
-                            pass
-                            #TODO: revert the move
+                            board.move_piece(piece,oldy,oldx)
+                            board.array[square[0]][square[1]] = dest
                             #TODO: print a message
 
                     elif (piece.y,piece.x)==square: #CANCEL MOVE
@@ -98,14 +102,18 @@ if __name__ == "__main__":
                         pass
                         #TODO: print a message
 
-        """"
+
         #AI's turn
         else:
+            """
             value, move = minimax(board,5,float("-inf"),float("inf"), True, trans_table)
             if value == float("-inf"):
                 #AI IS IN CHECKMATE
                 gameover = True
-        """
+            """
+            #just go back to player one for now lol
+            player = 1
+
 
             # elif event.type == pygame.MOUSEBUTTONUP:
             #     pos = pygame.mouse.get_pos()
@@ -122,7 +130,7 @@ if __name__ == "__main__":
 
         #print(event)
 
-        #screen.blit(bg, (0, 0))
+        screen.blit(bg, (0, 0))
         all_sprites_list.draw(screen)
         pygame.display.update()
         clock.tick(60)

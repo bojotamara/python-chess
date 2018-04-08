@@ -36,7 +36,8 @@ class Board:
         oldy = piece.y
         piece.x = x
         piece.y = y
-        piece.rect = x * 60, y * 60
+        piece.rect.x = x*60
+        piece.rect.y = y*60
         self.array[oldy][oldx] = None
         self.array[y][x] = piece
 
