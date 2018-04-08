@@ -19,13 +19,14 @@ if __name__ == "__main__":
     b = Board()
 
     all_sprites_list = pygame.sprite.Group()
-    all_sprites_list.add(piece for row in b.array for piece in row if piece)
+    sprites = [piece for row in b.array for piece in row if piece]
+    all_sprites_list.add(sprites)
 
     screen.blit(bg, (0, 0))
     all_sprites_list.draw(screen)
     # all_sprites_list = pygame.sprite.LayeredDirty(
     #     piece for row in b.array for piece in row if piece)
-    sprites = [piece for row in b.array for piece in row if piece]
+
     clock = pygame.time.Clock()
     crashed = False
 
