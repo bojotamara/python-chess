@@ -8,17 +8,19 @@ class Board:
 
     def __init__(self):
         self.empty = [[None for x in range(8)] for y in range(8)]
+        self.black_king = King("b", 0, 4)
+        self.white_king = King("w", 7, 4)
         self.array = [
-            [Rook("b", 0, 0), Knight("b", 0, 1), Bishop("b", 0, 2), Queen("b", 0, 3), King(
-                "b", 0, 4), Bishop("b", 0, 5), Knight("b", 0, 6), Rook("b", 0, 7)],
+            [Rook("b", 0, 0), Knight("b", 0, 1), Bishop("b", 0, 2), Queen("b", 0, 3),
+                self.black_king, Bishop("b", 0, 5), Knight("b", 0, 6), Rook("b", 0, 7)],
             [Pawn("b", 1, i) for i in range(8)],
             [None for x in range(8)],
             [None for x in range(8)],
             [None for x in range(8)],
             [None for x in range(8)],
             [Pawn("w", 6, i) for i in range(8)],
-            [Rook("w", 7, 0), Knight("w", 7, 1), Bishop("w", 7, 2), Queen("w", 7, 3), King(
-                "w", 7, 4), Bishop("w", 7, 5), Knight("w", 7, 6), Rook("w", 7, 7)]
+            [Rook("w", 7, 0), Knight("w", 7, 1), Bishop("w", 7, 2), Queen("w", 7, 3),
+                self.white_king, Bishop("w", 7, 5), Knight("w", 7, 6), Rook("w", 7, 7)]
         ]
         # used in minimax to find the best move
         self.score = 0
@@ -34,7 +36,8 @@ class Board:
         oldy = piece.y
         piece.x = x
         piece.y = y
-        piece.rect = x * 60, y * 60
+        piece.rect.x = x*60
+        piece.rect.y = y*60
         self.array[oldy][oldx] = None
         self.array[y][x] = piece
 
