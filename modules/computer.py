@@ -1,4 +1,4 @@
-from board import *
+from modules.board import *
 
 def matrix_to_tuple(array, empty_array):
     """
