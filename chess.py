@@ -90,6 +90,10 @@ if __name__ == "__main__":
                             # MOVE NOT IN CHECK WE GOOD
                             selected = False
                             player = "AI"
+                            # delete sprite
+                            if dest:
+                                all_sprites_list.remove(dest)
+                                sprites.remove(dest)
                         else:  # THIS MOVE IS IN CHECK
                             board.move_piece(piece, oldy, oldx)
                             board.array[square[0]][square[1]] = dest
