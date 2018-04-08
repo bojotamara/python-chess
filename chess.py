@@ -43,7 +43,7 @@ if __name__ == "__main__":
     board = Board()
 
     all_sprites_list = pygame.sprite.Group()
-    sprites = [piece for row in b.array for piece in row if piece]
+    sprites = [piece for row in board.array for piece in row if piece]
     all_sprites_list.add(sprites)
 
     screen.blit(bg, (0, 0))
@@ -96,7 +96,7 @@ if __name__ == "__main__":
                             # TODO: print a message
 
                     elif (piece.y, piece.x) == square:  # CANCEL MOVE
-                        # TODO:  unhighlight the square
+                        piece.unhighlight()
                         selected = False
 
                     else:  # INVALID MOVE

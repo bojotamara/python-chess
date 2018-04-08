@@ -36,10 +36,11 @@ class Board:
         oldy = piece.y
         piece.x = x
         piece.y = y
-        piece.rect.x = x*60
-        piece.rect.y = y*60
+        piece.rect.x = x * 60
+        piece.rect.y = y * 60
         self.array[oldy][oldx] = None
         self.array[y][x] = piece
+        piece.unhighlight()
 
     """ NOT VALID W/ CURRENT BOARD IMPLEMENTATION
     # this is not a good place for this function, testing stuff out

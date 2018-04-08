@@ -129,6 +129,8 @@ class Piece(pygame.sprite.Sprite):
 
     def unhighlight(self):
         # TODO
+        self.image = pygame.Surface((60, 60), pygame.SRCALPHA, 32)
+        self.image.convert_alpha()
         self.image.blit(self.sprite, (0, 0))
         self.highlighed = not self.highlighed
 
