@@ -25,7 +25,7 @@ class Board:
         # used in minimax to find the best move
         self.score = 0
         # maps piecetype to relative value
-        self.pvalue_dict = {King: 200, Queen: 9,
+        self.pvalue_dict = {King: 200, Queen: 10,
                             Rook: 5, Knight: 3, Bishop: 3, Pawn: 1}
 
     def move_piece(self, piece, y, x):

@@ -53,8 +53,6 @@ def select_square():
     y = y // 60
     return (y, x)
 
-def determine_check(board, color, attacked):
-
 def run_game():
     gameover = False
     player = 1  # 'AI' otherwise
@@ -118,11 +116,13 @@ def run_game():
 
         # AI's turn
         else:
-            value, move = minimax(board,3,float("-inf"),float("inf"), True, trans_table, sprites)
-
-            if value == float("-inf") or move == 0:
+            value, move = minimax(board,3,float("-inf"),float("inf"), True, trans_table, sprites, screen)
+            print(value, move)
+            if value == float("-inf"):
                 print(value)
                 print(move)
+                pygame.image.save(screen,"screen.jpg")
+                print("AI checkmate")
                 #AI IS IN CHECKMATE
                 gameover = True
             else:
@@ -136,7 +136,12 @@ def run_game():
                     sprites.remove(dest)
                     board.score += board.pvalue_dict[type(dest)]
                 player = 1
-                print(board.score)
+
+            if value == float("inf"):
+                print("Player checkmate")
+                gameover = True
+
+
 
 
         screen.blit(bg, (0, 0))
@@ -145,7 +150,10 @@ def run_game():
         clock.tick(60)
 
 def game_over():
+    pygame.image.save(screen,"screen.jpg")
     board.print_to_terminal()
+
+
 if __name__ == "__main__":
 
     run_game()
