@@ -219,5 +219,5 @@ if __name__ == "__main__":
     run_game()
     game_over()
     # delete picture taken
-    # from os import remove
-    # remove('assets/avatar.jpg')
+    from os import remove
+    remove('assets/avatar.jpg')
