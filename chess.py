@@ -164,6 +164,10 @@ def run_game():
                 print(move)
                 # AI IS IN CHECKMATE
                 gameover = True
+                player = 1
+                update_sidemenu(
+                    'Checkmate!\nYou Win!\nPress any key to quit.', (255, 255, 0))
+
             else:
                 start = move[0]
                 end = move[1]
@@ -187,7 +191,8 @@ def run_game():
             if value == float("inf"):
                 print("Player checkmate")
                 gameover = True
-                # update_sidemenu('Your Turn!', (255, 255, 255))
+                update_sidemenu(
+                    'Checkmate!\nCPU Wins!\nPress any key to quit.', (255, 255, 0))
 
         screen.blit(bg, (0, 0))
         all_sprites_list.draw(screen)
@@ -195,8 +200,20 @@ def run_game():
         clock.tick(60)
 
 
-def game_over():
+def game_over(winner):
     board.print_to_terminal()
+    crown = pygame.image.load("assets/Clippy.png").convert_alpha()
+    screen.blit(crown, (520, 20))
+    while True:
+        for event in pygame.event.get():
+            # print(event.type)
+            # print(event)
+            if event.type == pygame.KEYUP or event.type == pygame.MOUSEBUTTONUP:
+                return
+            elif event.type == pygame.QUIT:
+                import sys
+                sys.exit()
+        pygame.display.update()
 
 
 def update_sidemenu(message, colour):
