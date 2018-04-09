@@ -66,7 +66,7 @@ def select_square():
 def run_game():
     # clippy avatar for computer player
     global player, playeravatar, clippy
-    playeravatar = pygame.image.load("assets/avatar.jpg").convert()
+    playeravatar = pygame.image.load("assets/avatar.png").convert_alpha()
     playeravatar = pygame.transform.scale(playeravatar, (320, 240))
     update_sidemenu('Your Turn!', (255, 255, 255))
 
@@ -125,8 +125,18 @@ def run_game():
                                 sprites.append(dest)
                             piece.highlight()
                             # TODO: print a message player is in check
-                            update_sidemenu(
-                                'This move would put you in check!', (255, 0, 0))
+                            if checkWhite:
+                                update_sidemenu(
+                                    'You have to get out of check!', (255, 0, 0))
+                                pygame.display.update()
+                                pygame.time.wait(1000)
+                                update_sidemenu('Your Turn: Check!', (255, 0, 0))
+                            else:
+                                update_sidemenu(
+                                    'This move would put you in check!', (255, 0, 0))
+                                pygame.display.update()
+                                pygame.time.wait(1000)
+                                update_sidemenu('Your turn!', (255, 255, 255))
 
                     elif (piece.y, piece.x) == square:  # CANCEL MOVE
                         piece.unhighlight()
@@ -138,7 +148,10 @@ def run_game():
                         update_sidemenu('Invalid move!', (255, 0, 0))
                         pygame.display.update()
                         pygame.time.wait(1000)
-                        update_sidemenu('Your turn!', (255, 255, 255))
+                        if checkWhite:
+                            update_sidemenu('Your Turn: Check!', (255, 0, 0))
+                        else:
+                            update_sidemenu('Your turn!', (255, 255, 255))
 
         # AI's turn
         else:
@@ -164,8 +177,10 @@ def run_game():
                 attacked = move_gen(board, "b", sprites, True)
                 if (board.white_king.y, board.white_king.x) in attacked:
                     update_sidemenu('Your Turn: Check!', (255, 0, 0))
-
-                update_sidemenu('Your Turn!', (255, 255, 255))
+                    checkWhite = True
+                else:
+                    update_sidemenu('Your Turn!', (255, 255, 255))
+                    checkWhite = False
                 print(board.score)
                 # print('SIDE MENU UPDATE')
             if value == float("inf"):
@@ -209,7 +224,7 @@ def camstream():
     # modified from https://gist.github.com/snim2/255151
     DEVICE = '/dev/video0'
     SIZE = (640, 480)
-    FILENAME = 'assets/avatar.jpg'
+    FILENAME = 'assets/avatar.png'
     import pygame.camera
     pygame.camera.init()
     display = pygame.display.set_mode((800, 60 * 8), 0)
@@ -271,9 +286,9 @@ def welcome():
 
 if __name__ == "__main__":
     welcome()
-    camstream()
+    try:
+        camstream()
+    except:
+        pass
     run_game()
     game_over()
-    # delete picture taken
-    from os import remove
-    remove('assets/avatar.jpg')
