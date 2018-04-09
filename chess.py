@@ -29,8 +29,10 @@ playeravatar = None
 # board matrix
 board = Board()
 
+global all_sprites_list, sprites
 all_sprites_list = pygame.sprite.Group()
 sprites = [piece for row in board.array for piece in row if piece]
+
 all_sprites_list.add(sprites)
 
 all_sprites_list.draw(screen)
@@ -151,7 +153,6 @@ def run_game():
                     elif special_moves and square in special_moves:
                         special = special_moves[square]
                         if (special == "CR" or special == "CL") and type(piece) == King:
-
                             board.move_piece(piece,square[0],square[1],special)
                             selected = False
                             player = "AI"
@@ -177,6 +178,7 @@ def run_game():
 
         # AI's turn
         else:
+
             value, move = minimax(board, 3, float(
                 "-inf"), float("inf"), True, trans_table)
 

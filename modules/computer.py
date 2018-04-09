@@ -50,7 +50,6 @@ def check_castling(board,c,side):
     if side == "r":
         return castleRight
     elif side == "l":
-        print("castleLeft: ", castleLeft)
         return castleLeft
 
 def special_move_gen(board,color,moves = None):
@@ -62,6 +61,7 @@ def special_move_gen(board,color,moves = None):
         x = 0
     rightCastle = check_castling(board,color,"r")
     leftCastle = check_castling(board,color,"l")
+
     if rightCastle:
         moves[(x,6)] = "CR"
     if leftCastle:

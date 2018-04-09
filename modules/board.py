@@ -1,5 +1,16 @@
 from modules.pieces import *
 
+def check_promotion(piece,y):
+    if piece.color == "w":
+        row = 1
+        inc = -1
+    elif piece.color == "b":
+        row = 6
+        inc = 1
+    if type(piece) == Pawn and piece.y == row and y == piece.y + inc:
+        return True
+    else:
+        return False
 
 class Board:
     """
@@ -55,7 +66,10 @@ class Board:
                 rook = self.black_rook_right
             rook.moved = True
             self.move_piece(rook,j,i) # move the rook
-
+        elif special == "PP":
+            self.move_piece(piece,y,x) #move the pawn
+            #promote it to a queen
+            board.array[y][x] = Queen(piece.color,y,x)
 
 
     def move_piece(self, piece, y, x, special = False):
@@ -63,6 +77,8 @@ class Board:
         Moves an instance of the piece class to (y,x)
         """
         if not special:
+            #promotion = check_promotion(piece,y)
+            promotion = False
             oldx = piece.x
             oldy = piece.y
             piece.x = x
@@ -70,8 +86,20 @@ class Board:
             piece.rect.x = x * 60
             piece.rect.y = y * 60
             self.array[oldy][oldx] = None
-            self.array[y][x] = piece
-            piece.unhighlight()
+            if promotion:
+                print("Check promotion: ", True)
+                self.array[y][x] = Queen(piece.color,y,x)
+                try:
+                    all_sprites_list.add(self.array[y][x])
+                    sprites.append(self.array[y][x])
+                    all_sprites_list.remove(piece)
+                    sprites.remove(piece)
+                except:
+                    pass
+
+            else:
+                self.array[y][x] = piece
+                piece.unhighlight()
         else:
             self.special_move(piece,y,x,special)
 
