@@ -21,7 +21,7 @@ bg = pygame.image.load("assets/chessboard.png").convert()
 sidebg = pygame.image.load("assets/woodsidemenu.jpg").convert()
 player = 1  # 'AI' otherwise
 myfont = pygame.font.Font("assets/Roboto-Black.ttf", 30)
-clippy = pygame.image.load("assets/cpu.jpg").convert()
+clippy = pygame.image.load("assets/Clippy.png").convert_alpha()
 clippy = pygame.transform.scale(clippy, (320, 240))
 playeravatar = None
 
