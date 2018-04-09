@@ -200,9 +200,10 @@ def run_game():
         clock.tick(60)
 
 
-def game_over(winner):
+def game_over():
     board.print_to_terminal()
-    crown = pygame.image.load("assets/Clippy.png").convert_alpha()
+    crown = pygame.image.load("assets/crown.png").convert_alpha()
+    crown = pygame.transform.scale(clippy, (80, 60))
     screen.blit(crown, (520, 20))
     while True:
         for event in pygame.event.get():
