@@ -181,6 +181,7 @@ class Rook(Piece):
         self.sprite = pygame.image.load("assets/{}rook.png".format(self.color))
         self.symbol = "R"
         self.image.blit(self.sprite, (0, 0))
+        self.moved = False
 
     def gen_legal_moves(self, board):
 
@@ -232,6 +233,7 @@ class King(Piece):
         self.sprite = pygame.image.load("assets/{}king.png".format(self.color))
         self.symbol = "K"
         self.image.blit(self.sprite, (0, 0))
+        self.moved = False
 
     def gen_legal_moves(self, board):
         move_set = set()

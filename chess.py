@@ -82,7 +82,7 @@ def run_game():
         if player == 1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    gameover = True
+                    pygame.quit()
 
                 # select a piece to move
                 elif event.type == pygame.MOUSEBUTTONDOWN and not selected:
@@ -96,16 +96,20 @@ def run_game():
                 # piece is selected, now move it somewhere
                 elif event.type == pygame.MOUSEBUTTONDOWN and selected:
                     square = select_square()
+                    special_moves = special_move_gen(board,"w")
+
                     if square in player_moves:
                         oldx = piece.x  # preserve, in case we have to reverse the move
                         oldy = piece.y
                         dest = board.array[square[0]][square[1]]
                         board.move_piece(piece, square[0], square[1])
+                        if type(piece) == King or type(piece) == Rook:
+                            piece.moved = True
                         if dest:
                             all_sprites_list.remove(dest)
                             sprites.remove(dest)
                         # see if move puts you in check
-                        attacked = move_gen(board, "b", sprites, True)
+                        attacked = move_gen(board, "b", True)
                         if (board.white_king.y, board.white_king.x) not in attacked:
                             # MOVE NOT IN CHECK WE GOOD
                             selected = False
@@ -118,6 +122,8 @@ def run_game():
                                 board.score -= board.pvalue_dict[type(dest)]
                         else:  # THIS MOVE IS IN CHECK
                             board.move_piece(piece, oldy, oldx)
+                            if type(piece) == King or type(piece) == Rook:
+                                piece.moved = False
                             board.array[square[0]][square[1]] = dest
                             if dest:
                                 all_sprites_list.add(dest)
@@ -142,9 +148,25 @@ def run_game():
                         piece.unhighlight()
                         selected = False
 
-                    else:  # INVALID MOVE
+                    elif special_moves and square in special_moves:
+                        special = special_moves[square]
+                        if (special == "CR" or special == "CL") and type(piece) == King:
 
-                        # TODO: print a message
+                            board.move_piece(piece,square[0],square[1],special)
+                            selected = False
+                            player = "AI"
+
+                        else:
+                            update_sidemenu('Invalid move!', (255, 0, 0))
+                            pygame.display.update()
+                            pygame.time.wait(1000)
+                            if checkWhite:
+                                update_sidemenu('Your Turn: Check!', (255, 0, 0))
+                            else:
+                                update_sidemenu('Your turn!', (255, 255, 255))
+
+                    else:  # INVALID NORMAL MOVE;
+
                         update_sidemenu('Invalid move!', (255, 0, 0))
                         pygame.display.update()
                         pygame.time.wait(1000)
@@ -156,9 +178,9 @@ def run_game():
         # AI's turn
         else:
             value, move = minimax(board, 3, float(
-                "-inf"), float("inf"), True, trans_table, sprites, screen)
+                "-inf"), float("inf"), True, trans_table)
 
-            if value == float("-inf"):
+            if value == float("-inf") and move == 0:
                 print(value)
                 print(move)
                 # AI IS IN CHECKMATE
@@ -178,7 +200,7 @@ def run_game():
                     sprites.remove(dest)
                     board.score += board.pvalue_dict[type(dest)]
                 player = 1
-                attacked = move_gen(board, "b", sprites, True)
+                attacked = move_gen(board, "b", True)
                 if (board.white_king.y, board.white_king.x) in attacked:
                     update_sidemenu('Your Turn: Check!', (255, 0, 0))
                     checkWhite = True
@@ -205,6 +227,7 @@ def game_over():
     crown = pygame.transform.scale(crown, (80, 60))
     screen.blit(crown, (520, 20))
     pygame.event.clear()
+    pygame.time.wait(1000)
     while True:
         for event in pygame.event.get():
             # print(event.type)
