@@ -1,7 +1,7 @@
 # ------------- INITIALIZATIONS-------------------
 import pygame
 import copy
-import textwrap
+# import textwrap
 
 # from assets import **
 
@@ -125,7 +125,8 @@ def run_game():
                                 sprites.append(dest)
                             piece.highlight()
                             # TODO: print a message player is in check
-                            update_sidemenu('Check!', (255, 0, 0))
+                            update_sidemenu(
+                                'This move would put you in check!', (255, 0, 0))
 
                     elif (piece.y, piece.x) == square:  # CANCEL MOVE
                         piece.unhighlight()
@@ -160,14 +161,17 @@ def run_game():
                     sprites.remove(dest)
                     board.score += board.pvalue_dict[type(dest)]
                 player = 1
+                attacked = move_gen(board, "b", sprites, True)
+                if (board.white_king.y, board.white_king.x) in attacked:
+                    update_sidemenu('Your Turn: Check!', (255, 0, 0))
 
-                update_sidemenu('abcdefghijklmnopqrstuvwxyz', (255, 255, 255))
+                update_sidemenu('Your Turn!', (255, 255, 255))
                 print(board.score)
                 # print('SIDE MENU UPDATE')
             if value == float("inf"):
                 print("Player checkmate")
                 gameover = True
-                update_sidemenu('Your Turn!', (255, 255, 255))
+                # update_sidemenu('Your Turn!', (255, 255, 255))
 
         screen.blit(bg, (0, 0))
         all_sprites_list.draw(screen)
@@ -180,6 +184,7 @@ def game_over():
 
 
 def update_sidemenu(message, colour):
+
     screen.blit(sidebg, (480, 0))
     global playeravatar, clippy
     if player == 1:
@@ -188,8 +193,14 @@ def update_sidemenu(message, colour):
     elif player == 'AI':
         screen.blit(clippy, (480, 0))
 
-    textsurface = myfont.render(message, False, colour)
-    screen.blit(textsurface, (500, 250))
+    # textsurface = myfont.render(textwrap.fill(message, 19), False, colour)
+    # screen.blit(textsurface, (500, 250))
+    message = message.splitlines()
+    c = 0
+    for m in message:
+        textsurface = myfont.render(m, False, colour)
+        screen.blit(textsurface, (500, 250 + c))
+        c += 40
 
 
 def camstream():
@@ -249,7 +260,7 @@ def welcome():
     while True:
         for event in pygame.event.get():
             # print(event.type)
-            print(event)
+            # print(event)
             if event.type == pygame.KEYUP or event.type == pygame.MOUSEBUTTONUP:
                 return
             elif event.type == pygame.QUIT:
