@@ -45,8 +45,7 @@ clock = pygame.time.Clock()
 def select_piece(color):
     pos = pygame.mouse.get_pos()
     # get a list of all sprites that are under the mouse cursor
-    clicked_sprites = [
-        s for s in sprites if s.rect.collidepoint(pos)]
+    clicked_sprites = [s for s in sprites if s.rect.collidepoint(pos)]
 
     # only highlight, and return if its the player's piece
     if len(clicked_sprites) == 1 and clicked_sprites[0].color == color:
