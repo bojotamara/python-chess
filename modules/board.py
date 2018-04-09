@@ -66,10 +66,6 @@ class Board:
                 rook = self.black_rook_right
             rook.moved = True
             self.move_piece(rook,j,i) # move the rook
-        elif special == "PP":
-            self.move_piece(piece,y,x) #move the pawn
-            #promote it to a queen
-            board.array[y][x] = Queen(piece.color,y,x)
 
 
     def move_piece(self, piece, y, x, special = False):
