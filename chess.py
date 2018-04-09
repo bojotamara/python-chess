@@ -127,13 +127,14 @@ def run_game():
                             # TODO: print a message player is in check
                             if checkWhite:
                                 update_sidemenu(
-                                    'You have to get out of check!', (255, 0, 0))
+                                    'You have to get out\nof check!', (255, 0, 0))
                                 pygame.display.update()
                                 pygame.time.wait(1000)
-                                update_sidemenu('Your Turn: Check!', (255, 0, 0))
+                                update_sidemenu(
+                                    'Your Turn: Check!', (255, 0, 0))
                             else:
                                 update_sidemenu(
-                                    'This move would put you in check!', (255, 0, 0))
+                                    'This move would put\nyou in check!', (255, 0, 0))
                                 pygame.display.update()
                                 pygame.time.wait(1000)
                                 update_sidemenu('Your turn!', (255, 255, 255))
