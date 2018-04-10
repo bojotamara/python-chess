@@ -9,7 +9,7 @@ pygame.init()
 pygame.font.init()  # for text
 
 screen = pygame.display.set_mode((800, 60 * 8))
-pygame.display.set_caption('Boss Ass Chess Game')
+pygame.display.set_caption('Python Chess Game')
 
 from modules.board import *
 from modules.computer import *
@@ -80,7 +80,7 @@ def run_game():
     gameover = False
 
     selected = False  # indicates whether a piece is selected yet
-    trans_table = dict() # holds previously computed minimax values
+    trans_table = dict()  # holds previously computed minimax values
 
     while not gameover:
 
@@ -114,16 +114,18 @@ def run_game():
                         # attempt to move the piece
                         # if a pawn promotion occurs, return the sprites that
                         # we need to update
-                        pawn_promotion = board.move_piece(piece, square[0], square[1])
+                        pawn_promotion = board.move_piece(
+                            piece, square[0], square[1])
 
-                        if pawn_promotion: # remove the pawn sprite, add the queen sprite
+                        if pawn_promotion:  # remove the pawn sprite, add the queen sprite
                             all_sprites_list.add(pawn_promotion[0])
                             sprites.append(pawn_promotion[0])
                             all_sprites_list.remove(pawn_promotion[1])
                             sprites.remove(pawn_promotion[1])
-                        if type(piece) == King or type(piece) == Rook: # this is needed for proper castling
+                        # this is needed for proper castling
+                        if type(piece) == King or type(piece) == Rook:
                             piece.moved = True
-                        if dest: # remove the sprite of the piece that was eaten
+                        if dest:  # remove the sprite of the piece that was eaten
                             all_sprites_list.remove(dest)
                             sprites.remove(dest)
 
