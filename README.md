@@ -22,27 +22,27 @@ For more specific instructions on how to play, see 'Usage Instructions'.
 ###### Make sure you're using python 3
 
 ### Ubuntu
-'''
+```bash
 sudo apt install python3-pip
 pip3 -m install --user pygame
 python3 chess.py
-'''
+```
 
 ### Arch
-'''
+```bash
 sudo pacman -S python-pip
 pip -m install --user pygame
 python chess.py
-'''
+```
 
 ### Windows
 ###### In the installer, make sure to add python to your PATH
 https://www.python.org/downloads/release/python-365/
 Open a command prompt window:
-'''
+```
 pip -m install --user pygame
 python chess.py
-'''
+```
 
 
 
