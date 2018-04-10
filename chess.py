@@ -29,8 +29,10 @@ playeravatar = None
 # board matrix
 board = Board()
 
+global all_sprites_list, sprites
 all_sprites_list = pygame.sprite.Group()
 sprites = [piece for row in board.array for piece in row if piece]
+
 all_sprites_list.add(sprites)
 
 all_sprites_list.draw(screen)
@@ -102,7 +104,12 @@ def run_game():
                         oldx = piece.x  # preserve, in case we have to reverse the move
                         oldy = piece.y
                         dest = board.array[square[0]][square[1]]
-                        board.move_piece(piece, square[0], square[1])
+                        to_update = board.move_piece(piece, square[0], square[1])
+                        if to_update:
+                            all_sprites_list.add(to_update[0])
+                            sprites.append(to_update[0])
+                            all_sprites_list.remove(to_update[1])
+                            sprites.remove(to_update[1])
                         if type(piece) == King or type(piece) == Rook:
                             piece.moved = True
                         if dest:
@@ -151,7 +158,6 @@ def run_game():
                     elif special_moves and square in special_moves:
                         special = special_moves[square]
                         if (special == "CR" or special == "CL") and type(piece) == King:
-
                             board.move_piece(piece,square[0],square[1],special)
                             selected = False
                             player = "AI"
@@ -194,7 +200,13 @@ def run_game():
                 end = move[1]
                 piece = board.array[start[0]][start[1]]
                 dest = board.array[end[0]][end[1]]
-                board.move_piece(piece, end[0], end[1])
+                to_update = board.move_piece(piece, end[0], end[1])
+                if to_update:
+                    all_sprites_list.add(to_update[0])
+                    sprites.append(to_update[0])
+                    all_sprites_list.remove(to_update[1])
+                    sprites.remove(to_update[1])
+
                 if dest:
                     all_sprites_list.remove(dest)
                     sprites.remove(dest)

@@ -1,5 +1,16 @@
 from modules.pieces import *
 
+def check_promotion(piece,y):
+    if piece.color == "w":
+        row = 1
+        inc = -1
+    elif piece.color == "b":
+        row = 6
+        inc = 1
+    if type(piece) == Pawn and piece.y == row and y == piece.y + inc:
+        return True
+    else:
+        return False
 
 class Board:
     """
@@ -29,7 +40,7 @@ class Board:
         # used in minimax to find the best move
         self.score = 0
         # maps piecetype to relative value
-        self.pvalue_dict = {King: 0, Queen: 10,
+        self.pvalue_dict = {King: 200, Queen: 10,
                             Rook: 5, Knight: 3, Bishop: 3, Pawn: 1}
 
     def special_move(self,piece, y,x,special):
@@ -57,12 +68,13 @@ class Board:
             self.move_piece(rook,j,i) # move the rook
 
 
-
-    def move_piece(self, piece, y, x, special = False):
+    # mm is so the player only does promotion lol
+    def move_piece(self, piece, y, x, special = False, mm = False):
         """
         Moves an instance of the piece class to (y,x)
         """
         if not special:
+            promotion = check_promotion(piece,y)
             oldx = piece.x
             oldy = piece.y
             piece.x = x
@@ -70,8 +82,17 @@ class Board:
             piece.rect.x = x * 60
             piece.rect.y = y * 60
             self.array[oldy][oldx] = None
-            self.array[y][x] = piece
-            piece.unhighlight()
+            if promotion and not mm:
+                print("Check promotion: ", True)
+                self.array[y][x] = Queen(piece.color,y,x)
+                if piece.color == "w":
+                    self.score -= 9 #losing a pawn but gaining a queen
+                elif piece.color == "b":
+                    self.score += 9
+                return self.array[y][x], piece
+            else:
+                self.array[y][x] = piece
+                piece.unhighlight()
         else:
             self.special_move(piece,y,x,special)
 

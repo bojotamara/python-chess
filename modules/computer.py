@@ -22,29 +22,34 @@ def check_castling(board,c,side):
         king = board.white_king
         leftRook = board.white_rook_left
         rightRook =  board.white_rook_right
-        #attacked = move_gen(board, "b", True)
+        attacked = move_gen(board, "b", True)
         i = 7
     elif c == "b":
         king = board.black_king
         leftRook = board.black_rook_left
         rightRook =  board.black_rook_right
-        #attacked = move_gen(board, "w", True)
+        attacked = move_gen(board, "w", True)
         i = 0
+
+    squares = set()
 
     if king.moved == False:
     # left castle, check the rook
         if board.array[i][0] == leftRook and leftRook.moved == False:
+            squares = {(i,1),(i,2),(i,3),(i,1),(i,2),(i,3)}
             if not board.array[i][1] and not board.array[i][2] and not board.array[i][3]:
-                castleLeft = True
+                if not attacked.intersection(squares):
+                    castleLeft = True
     #right castle
         if board.array[i][7] == rightRook and rightRook.moved == False:
+            squares = {(i,6),(i,5)}
             if not board.array[i][6] and not board.array[i][5]:
-                castleRight = True
-    if side == "r":
+                if not attacked.intersection(squares):
+                    castleRight = True
 
+    if side == "r":
         return castleRight
     elif side == "l":
-        print("castleLeft: ", castleLeft)
         return castleLeft
 
 def special_move_gen(board,color,moves = None):
@@ -56,6 +61,7 @@ def special_move_gen(board,color,moves = None):
         x = 0
     rightCastle = check_castling(board,color,"r")
     leftCastle = check_castling(board,color,"l")
+
     if rightCastle:
         moves[(x,6)] = "CR"
     if leftCastle:
@@ -135,7 +141,7 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
                 #develop the 'child'
                 piece = board.array[start[0]][start[1]]
                 dest = board.array[end[0]][end[1]]
-                board.move_piece(piece,end[0],end[1])
+                board.move_piece(piece,end[0],end[1],False,True)
                 #if dest:
                     #sprites.remove(dest)
 
@@ -144,7 +150,7 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
 
                 if (board.black_king.y,board.black_king.x) in attacked:
                     piece = board.array[end[0]][end[1]]
-                    board.move_piece(piece,start[0],start[1])
+                    board.move_piece(piece,start[0],start[1],False, True)
                     board.array[end[0]][end[1]] = dest
                     #if dest:
                         #sprites.append(dest)
@@ -160,7 +166,7 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
 
                 # revert the board
                 piece = board.array[end[0]][end[1]]
-                board.move_piece(piece,start[0],start[1])
+                board.move_piece(piece,start[0],start[1],False, True)
                 board.array[end[0]][end[1]] = dest
                 #if dest:
                     #sprites.append(dest)
@@ -197,7 +203,7 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
                 #DEVELOP the child
                 piece = board.array[start[0]][start[1]]
                 dest = board.array[end[0]][end[1]]
-                board.move_piece(piece,end[0],end[1])
+                board.move_piece(piece,end[0],end[1],False,True)
                 #if dest:
                     #sprites.remove(dest)
 
@@ -206,7 +212,7 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
 
                 if (board.white_king.y,board.white_king.x) in attacked:
                     piece = board.array[end[0]][end[1]]
-                    board.move_piece(piece,start[0],start[1])
+                    board.move_piece(piece,start[0],start[1],False,True)
                     board.array[end[0]][end[1]] = dest
                     #if dest:
                     #    sprites.append(dest)
@@ -223,7 +229,7 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
 
                 #preserve shit
                 piece = board.array[end[0]][end[1]]
-                board.move_piece(piece,start[0],start[1])
+                board.move_piece(piece,start[0],start[1],False,True)
                 board.array[end[0]][end[1]] = dest
                 #if dest:
                 #    sprites.append(dest)
