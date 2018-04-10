@@ -104,7 +104,12 @@ def run_game():
                         oldx = piece.x  # preserve, in case we have to reverse the move
                         oldy = piece.y
                         dest = board.array[square[0]][square[1]]
-                        board.move_piece(piece, square[0], square[1])
+                        to_update = board.move_piece(piece, square[0], square[1])
+                        if to_update:
+                            all_sprites_list.add(to_update[0])
+                            sprites.append(to_update[0])
+                            all_sprites_list.remove(to_update[1])
+                            sprites.remove(to_update[1])
                         if type(piece) == King or type(piece) == Rook:
                             piece.moved = True
                         if dest:
@@ -178,7 +183,6 @@ def run_game():
 
         # AI's turn
         else:
-
             value, move = minimax(board, 3, float(
                 "-inf"), float("inf"), True, trans_table)
 
@@ -196,7 +200,13 @@ def run_game():
                 end = move[1]
                 piece = board.array[start[0]][start[1]]
                 dest = board.array[end[0]][end[1]]
-                board.move_piece(piece, end[0], end[1])
+                to_update = board.move_piece(piece, end[0], end[1])
+                if to_update:
+                    all_sprites_list.add(to_update[0])
+                    sprites.append(to_update[0])
+                    all_sprites_list.remove(to_update[1])
+                    sprites.remove(to_update[1])
+
                 if dest:
                     all_sprites_list.remove(dest)
                     sprites.remove(dest)

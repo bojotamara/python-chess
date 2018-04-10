@@ -141,7 +141,7 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
                 #develop the 'child'
                 piece = board.array[start[0]][start[1]]
                 dest = board.array[end[0]][end[1]]
-                board.move_piece(piece,end[0],end[1])
+                board.move_piece(piece,end[0],end[1],False,True)
                 #if dest:
                     #sprites.remove(dest)
 
@@ -150,7 +150,7 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
 
                 if (board.black_king.y,board.black_king.x) in attacked:
                     piece = board.array[end[0]][end[1]]
-                    board.move_piece(piece,start[0],start[1])
+                    board.move_piece(piece,start[0],start[1],False, True)
                     board.array[end[0]][end[1]] = dest
                     #if dest:
                         #sprites.append(dest)
@@ -166,7 +166,7 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
 
                 # revert the board
                 piece = board.array[end[0]][end[1]]
-                board.move_piece(piece,start[0],start[1])
+                board.move_piece(piece,start[0],start[1],False, True)
                 board.array[end[0]][end[1]] = dest
                 #if dest:
                     #sprites.append(dest)
@@ -203,7 +203,7 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
                 #DEVELOP the child
                 piece = board.array[start[0]][start[1]]
                 dest = board.array[end[0]][end[1]]
-                board.move_piece(piece,end[0],end[1])
+                board.move_piece(piece,end[0],end[1],False,True)
                 #if dest:
                     #sprites.remove(dest)
 
@@ -212,7 +212,7 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
 
                 if (board.white_king.y,board.white_king.x) in attacked:
                     piece = board.array[end[0]][end[1]]
-                    board.move_piece(piece,start[0],start[1])
+                    board.move_piece(piece,start[0],start[1],False,True)
                     board.array[end[0]][end[1]] = dest
                     #if dest:
                     #    sprites.append(dest)
@@ -229,7 +229,7 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
 
                 #preserve shit
                 piece = board.array[end[0]][end[1]]
-                board.move_piece(piece,start[0],start[1])
+                board.move_piece(piece,start[0],start[1],False,True)
                 board.array[end[0]][end[1]] = dest
                 #if dest:
                 #    sprites.append(dest)
