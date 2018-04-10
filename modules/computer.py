@@ -196,8 +196,11 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
         bestValue = float("inf")
         white_moves = move_gen(board,"w")
 
+        keys = list(white_moves.keys())
+        random.shuffle(keys)
         # explore all the potential moves from this board state
-        for start, move_set in white_moves.items():
+        for start in keys:
+            move_set = white_moves[start]
             for end in move_set:
 
                 # perform the move
