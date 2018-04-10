@@ -102,6 +102,7 @@ https://commons.wikimedia.org/wiki/Category:PNG_chess_pieces/Standard_transparen
 re converted to lcd format using the bmptolcd tool posted
 
 The camstream() function is modified from a gist. It's used to take a picture of the player https://gist.github.com/snim2/255151
+
 The assets/draw_chessboard.py function is modified from a gist as well. It generates the background chess board image using pillow
 (since the image is already generated, there is no need to install pillow) https://gist.github.com/victorfei/1843ffd5fe871ef74d6bb3ce2a01dee8
 

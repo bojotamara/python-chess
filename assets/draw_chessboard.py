@@ -1,6 +1,7 @@
 # This code not written by us. It was used to generate a Background chessboard image
 # It was modified to update t python3, and
 # to make brown squares, and the chess board was resized
+https: // gist.github.com / victorfei / 1843ffd5fe871ef74d6bb3ce2a01dee8
 
 #!/usr/bin/python
 # adapted from:
