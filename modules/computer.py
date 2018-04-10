@@ -141,19 +141,18 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
                 #develop the 'child'
                 piece = board.array[start[0]][start[1]]
                 dest = board.array[end[0]][end[1]]
-                board.move_piece(piece,end[0],end[1],False,True)
-                #if dest:
-                    #sprites.remove(dest)
+                to_update = board.move_piece(piece,end[0],end[1],False)
 
                 # see if the move puts you in check
                 attacked = move_gen(board,"w",True) #return spaces attacked by white
 
                 if (board.black_king.y,board.black_king.x) in attacked:
-                    piece = board.array[end[0]][end[1]]
                     board.move_piece(piece,start[0],start[1],False, True)
                     board.array[end[0]][end[1]] = dest
-                    #if dest:
-                        #sprites.append(dest)
+                    if to_update:
+                        board.score -= 9
+
+
                     continue
 
 
@@ -165,11 +164,12 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
 
 
                 # revert the board
-                piece = board.array[end[0]][end[1]]
+                #piece = board.array[end[0]][end[1]]
                 board.move_piece(piece,start[0],start[1],False, True)
                 board.array[end[0]][end[1]] = dest
-                #if dest:
-                    #sprites.append(dest)
+                if to_update:
+                    board.score -= 9
+
                 if v >= bestValue:
 
                     move = (start, (end[0],end[1])) # preserve the move
@@ -187,11 +187,6 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
             return bestValue, move
         except:
             return bestValue, 0
-            #pygame.image.save(screen,"screen.jpg")
-            #print(bestValue)
-            #board.print_to_terminal()
-            #raise ValueError("Hey somethings wrong")
-
 
 
     else:    #(* minimizing player *)
@@ -203,19 +198,17 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
                 #DEVELOP the child
                 piece = board.array[start[0]][start[1]]
                 dest = board.array[end[0]][end[1]]
-                board.move_piece(piece,end[0],end[1],False,True)
-                #if dest:
-                    #sprites.remove(dest)
+                to_update = board.move_piece(piece,end[0],end[1],False)
 
                 # see if the move puts your in check
                 attacked = move_gen(board,"b",True) #return spaces attacked by white
 
                 if (board.white_king.y,board.white_king.x) in attacked:
-                    piece = board.array[end[0]][end[1]]
+                    #piece = board.array[end[0]][end[1]]
                     board.move_piece(piece,start[0],start[1],False,True)
                     board.array[end[0]][end[1]] = dest
-                    #if dest:
-                    #    sprites.append(dest)
+                    if to_update:
+                        board.score += 9
                     continue
 
 
@@ -228,11 +221,11 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
                 beta = min(beta,bestValue)
 
                 #preserve shit
-                piece = board.array[end[0]][end[1]]
+                #piece = board.array[end[0]][end[1]]
                 board.move_piece(piece,start[0],start[1],False,True)
                 board.array[end[0]][end[1]] = dest
-                #if dest:
-                #    sprites.append(dest)
+                if to_update:
+                    board.score += 9
 
                 # revert the score
                 if dest != None:

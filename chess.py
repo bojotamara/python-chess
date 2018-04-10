@@ -135,8 +135,11 @@ def run_game():
                             if dest:
                                 all_sprites_list.add(dest)
                                 sprites.append(dest)
+                            if to_update:
+                                all_sprites_list.add(to_update[1])
+                                sprites.append(to_update[1])
                             piece.highlight()
-                            # TODO: print a message player is in check
+
                             if checkWhite:
                                 update_sidemenu(
                                     'You have to get out\nof check!', (255, 0, 0))
