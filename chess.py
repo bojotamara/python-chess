@@ -258,12 +258,12 @@ def run_game():
                     update_sidemenu('Your Turn!', (255, 255, 255))
                     checkWhite = False
 
-
                 print(board.score)
 
             if value == float("inf"):
                 print("Player checkmate")
                 gameover = True
+                player = 'AI'
                 update_sidemenu(
                     'Checkmate!\nCPU Wins!\nPress any key to quit.', (255, 255, 0))
 
