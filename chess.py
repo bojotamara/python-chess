@@ -240,6 +240,7 @@ def run_game():
 
 
 def game_over():
+    import os
     board.print_to_terminal()
     crown = pygame.image.load("assets/crown.png").convert_alpha()
     crown = pygame.transform.scale(crown, (80, 60))
@@ -256,6 +257,7 @@ def game_over():
                 import sys
                 sys.exit()
         pygame.display.update()
+    os.remove('assets/avatar.png')
 
 
 def update_sidemenu(message, colour):
@@ -354,5 +356,3 @@ if __name__ == "__main__":
         copyfile('assets/backupavatar.png', 'assets/avatar.png')
     run_game()
     game_over()
-    import os
-    os.remove('assets/avatar.png')
