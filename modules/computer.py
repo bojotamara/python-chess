@@ -1,4 +1,5 @@
 from modules.board import *
+import random
 
 def matrix_to_tuple(array, empty_array):
     """
@@ -135,9 +136,11 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
     if maximizing:
         bestValue = float("-inf")
         black_moves = move_gen(board,"b")
-
+        keys = list(black_moves.keys())
+        random.shuffle(keys)
         # explore all the potential moves from this board state
-        for start, move_set in black_moves.items():
+        for start in keys:
+            move_set = black_moves[start]
             for end in move_set:
 
                 # perform the move
