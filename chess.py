@@ -348,7 +348,11 @@ if __name__ == "__main__":
     welcome()
     try:
         camstream()
+        # raise('lol')
     except:
-        pass
+        from shutil import copyfile
+        copyfile('assets/backupavatar.png', 'assets/avatar.png')
     run_game()
     game_over()
+    import os
+    os.remove('assets/avatar.png')
