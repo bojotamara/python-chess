@@ -1,13 +1,12 @@
 # ------------- INITIALIZATIONS-------------------
 import pygame
 import copy
-# import textwrap
 
-# from assets import **
 
-pygame.init()
+pygame.init()  # essential for pygame
 pygame.font.init()  # for text
 
+# define display surface
 screen = pygame.display.set_mode((800, 60 * 8))
 pygame.display.set_caption('Python Chess Game')
 
@@ -15,8 +14,9 @@ from modules.board import *
 from modules.computer import *
 
 
-# blit like puts the image on there
+# blit puts image on the surface
 
+# load images
 bg = pygame.image.load("assets/chessboard.png").convert()
 sidebg = pygame.image.load("assets/woodsidemenu.jpg").convert()
 player = 1  # 'AI' otherwise
@@ -26,19 +26,19 @@ clippy = pygame.transform.scale(clippy, (320, 240))
 playeravatar = None
 
 
-# board matrix
+# board matrix, create instance of board class from modules.board
 board = Board()
 
+# allows us to keep track of sprites
 global all_sprites_list, sprites
 all_sprites_list = pygame.sprite.Group()
 sprites = [piece for row in board.array for piece in row if piece]
-
 all_sprites_list.add(sprites)
 
+# draw the sprites onto the screen
 all_sprites_list.draw(screen)
-# all_sprites_list = pygame.sprite.LayeredDirty(
-#     piece for row in b.array for piece in row if piece)
 
+# necessary for capping the game at 60FPS
 clock = pygame.time.Clock()
 
 # ----------- FUNCTIONS---------------------------------
@@ -69,13 +69,14 @@ def select_square():
 
 
 def run_game():
+    '''
+    main program loop for the chess game
+    '''
     # clippy avatar for computer player
     global player, playeravatar, clippy
     playeravatar = pygame.image.load("assets/avatar.png").convert_alpha()
     playeravatar = pygame.transform.scale(playeravatar, (320, 240))
     update_sidemenu('Your Turn!', (255, 255, 255))
-
-    # screen.blit(playeravatar, (550, 20))
 
     gameover = False
 
@@ -146,7 +147,7 @@ def run_game():
                             if type(piece) == King or type(piece) == Rook:
                                 piece.moved = False
                             board.array[square[0]][square[1]] = dest
-                            if dest:
+                            if dest:  # if dest not None
                                 all_sprites_list.add(dest)
                                 sprites.append(dest)
                             if pawn_promotion:
@@ -242,13 +243,14 @@ def run_game():
                     update_sidemenu('Your Turn!', (255, 255, 255))
                     checkWhite = False
                 print(board.score)
-                # print('SIDE MENU UPDATE')
+
             if value == float("inf"):
                 print("Player checkmate")
                 gameover = True
                 update_sidemenu(
                     'Checkmate!\nCPU Wins!\nPress any key to quit.', (255, 255, 0))
 
+        # redraw backgrount, update piece positions
         screen.blit(bg, (0, 0))
         all_sprites_list.draw(screen)
         pygame.display.update()
@@ -256,6 +258,9 @@ def run_game():
 
 
 def game_over():
+    '''
+    this runs before the game quits
+    '''
     import os
     board.print_to_terminal()
     crown = pygame.image.load("assets/crown.png").convert_alpha()
@@ -277,17 +282,22 @@ def game_over():
 
 
 def update_sidemenu(message, colour):
+    '''
+    allows the side menu to be updated with a custom message and colour in the rgb(x,x,x) format
+    \n characters can be passed in manually to print a new line below
+    '''
 
-    screen.blit(sidebg, (480, 0))
+    screen.blit(sidebg, (480, 0))  # update side menu background
     global playeravatar, clippy
+
+    # blit current player's avatar
     if player == 1:
         screen.blit(playeravatar, (480, 0))
 
     elif player == 'AI':
         screen.blit(clippy, (480, 0))
 
-    # textsurface = myfont.render(textwrap.fill(message, 19), False, colour)
-    # screen.blit(textsurface, (500, 250))
+    # separate text by \n and print as additional lines if needed
     message = message.splitlines()
     c = 0
     for m in message:
@@ -297,31 +307,45 @@ def update_sidemenu(message, colour):
 
 
 def camstream():
-    # bulk of the camera code was no written by us, since it's just here for fun
-    # and does not contribute to the actual game in any meaningful way
-    # modified from https://gist.github.com/snim2/255151
-    DEVICE = '/dev/video0'
-    SIZE = (640, 480)
-    FILENAME = 'assets/avatar.png'
-    import pygame.camera
-    pygame.camera.init()
-    display = pygame.display.set_mode((800, 60 * 8), 0)
-    camera = pygame.camera.Camera(DEVICE, SIZE)
-    camera.start()
-    screen = pygame.surface.Surface(SIZE, 0, display)
-    screen = camera.get_image(screen)
-    # display.blit(screen, (0, 0))
-    # pygame.display.flip()
-    # for event in pygame.event.get():
-    #     if event.type == pygame.QUIT:
-    #         capture = False
-    #     elif event.type == pygame.KEYDOWN and event.key == K_s:
-    pygame.image.save(screen, FILENAME)
-    camera.stop()
-    return
+    '''
+    the bulk of the camera code was not written by us, since it's just here for fun
+    and does not contribute to the actual game in any meaningful way
+    we use this to make a avatar for the user on the fly
+    modified from https://gist.github.com/snim2/255151
+    works only in linux, or by installing some dependency in windows [not tested]
+    '''
+    try:
+        DEVICE = '/dev/video0'
+        SIZE = (640, 480)
+        FILENAME = 'assets/avatar.png'
+        import pygame.camera
+        pygame.camera.init()
+        display = pygame.display.set_mode((800, 60 * 8), 0)
+        camera = pygame.camera.Camera(DEVICE, SIZE)
+        camera.start()
+        screen = pygame.surface.Surface(SIZE, 0, display)
+        screen = camera.get_image(screen)
+        # display.blit(screen, (0, 0))
+        # pygame.display.flip()
+        # for event in pygame.event.get():
+        #     if event.type == pygame.QUIT:
+        #         capture = False
+        #     elif event.type == pygame.KEYDOWN and event.key == K_s:
+        pygame.image.save(screen, FILENAME)
+        camera.stop()
+        return
+    except:
+        # if camera fails to take a picture, use backup generic avatar
+        from shutil import copyfile
+        copyfile('assets/backupavatar.png', 'assets/avatar.png')
 
 
 def welcome():
+    '''
+    display a welcome screen
+    this mostly is just blitting a bunch of surfaces in the right spot
+    '''
+    # wood background
     menubg = pygame.image.load("assets/menubg.jpg").convert()
     screen.blit(menubg, (0, 0))
     bigfont = pygame.font.Font("assets/Roboto-Black.ttf", 80)
@@ -336,6 +360,7 @@ def welcome():
         'Press any key to begin!', False, (255, 255, 255))
     screen.blit(textsurface, (250, 170))
 
+    # king and queen images
     menuking = pygame.image.load("assets/menuking.png").convert_alpha()
     menuqueen = pygame.image.load("assets/menuqueen.png").convert_alpha()
     menuking = pygame.transform.scale(menuking, (200, 200))
@@ -343,6 +368,7 @@ def welcome():
     screen.blit(menuking, (100, 230))
     screen.blit(menuqueen, (500, 230))
 
+    # our names
     textsurface = myfont.render(
         'Arun Woosaree', False, (255, 255, 255))
     screen.blit(textsurface, (100, 420))
@@ -350,6 +376,9 @@ def welcome():
     textsurface = myfont.render(
         'Tamara Bojovic', False, (255, 255, 255))
     screen.blit(textsurface, (500, 420))
+
+    # infinite loop until player wants to begin
+    pygame.event.clear()
     while True:
         for event in pygame.event.get():
             # print(event.type)
@@ -364,11 +393,6 @@ def welcome():
 
 if __name__ == "__main__":
     welcome()
-    try:
-        camstream()
-        # raise('lol')
-    except:
-        from shutil import copyfile
-        copyfile('assets/backupavatar.png', 'assets/avatar.png')
+    camstream()
     run_game()
     game_over()
