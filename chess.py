@@ -82,6 +82,7 @@ def run_game():
 
     selected = False  # indicates whether a piece is selected yet
     trans_table = dict()  # holds previously computed minimax values
+    checkWhite = False
 
     while not gameover:
 
