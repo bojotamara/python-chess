@@ -37,7 +37,8 @@ def move_check(your_color, y, x, board):
 # class Piece(pygame.sprite.DirtySprite):
 class Piece(pygame.sprite.Sprite):
     """
-    Piece in the chess game. Stores the color and the position in the board
+    Piece in the chess game. Stores the color and the position in the board,
+    along with graphics information (subclass of pygame sprite)
     """
 
     def __init__(self, color, y, x):
@@ -67,6 +68,7 @@ class Piece(pygame.sprite.Sprite):
         move_set = set()
         newX = self.x
 
+        #loop through, up and down, until there is an obstruction
         for i in (-1, 1):
             newY = self.y
             while(True):
@@ -81,6 +83,7 @@ class Piece(pygame.sprite.Sprite):
         # horizontal lines
         newY = self.y
 
+        #loop through, left and right, until there is an obstruction
         for i in (-1, 1):
             newX = self.x
             while(True):
@@ -147,20 +150,22 @@ class Pawn(Piece):
     def gen_legal_moves(self, board):
         move_set = set()
 
-        incr = {"w": -1, "b": 1}
+        incr = {"w": -1, "b": 1} # white moves up, black moves down
         offsets = [-1, 1]
         c = self.color
 
-        newY = self.y + incr[c]
         # normal move forward
+        newY = self.y + incr[c]
         if newY >= 0 and newY < 8 and board.array[newY][self.x] == None:
             move_set.add((newY, self.x))
 
+            #can move two spaces from the original row
             if (self.y == 1 and c == "b") or (self.y == 6 and c == "w"):
                 newY += incr[c]
                 if newY >= 0 and newY < 8 and board.array[newY][self.x] == None:
                     move_set.add((newY, self.x))
 
+        # can capture pieces diagonally
         for diff in offsets:
             newX = self.x + diff
             newY = self.y + incr[c]

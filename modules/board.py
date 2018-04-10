@@ -1,6 +1,9 @@
 from modules.pieces import *
 
 def check_promotion(piece,y):
+    '''
+    Checks to see if a pawn is eligble for promotion on it's next move
+    '''
     if piece.color == "w":
         row = 1
         inc = -1
@@ -19,8 +22,8 @@ class Board:
 
     def __init__(self):
         self.empty = [[None for x in range(8)] for y in range(8)]
-        self.black_king = King("b", 0, 4)
-        self.white_king = King("w", 7, 4)
+        self.black_king = King("b", 0, 4) # these objects are stored for easy
+        self.white_king = King("w", 7, 4) # access for special move checking
         self.white_rook_left = Rook("w", 7, 0)
         self.white_rook_right =  Rook("w", 7, 7)
         self.black_rook_left = Rook("b", 0, 0)
@@ -44,7 +47,13 @@ class Board:
                             Rook: 5, Knight: 3, Bishop: 3, Pawn: 1}
 
     def special_move(self,piece, y,x,special):
+        '''
+        Allows castling to be perfomed; it requires the movement of two pieces
+        **This is only called within the move_piece function
+        '''
         color = piece.color
+
+        # code for castling is CR or CL
         if special[0] == "C":
             self.move_piece(piece,y,x) # move the king
             piece.moved = True
@@ -68,10 +77,12 @@ class Board:
             self.move_piece(rook,j,i) # move the rook
 
 
-    # mm is so the player only does promotion lol
-    def move_piece(self, piece, y, x, special = False, mm = False):
+    def move_piece(self, piece, y, x, special = False, np = False):
         """
-        Moves an instance of the piece class to (y,x)
+        Moves an instance of the piece class to (y,x).
+        Special indiates a special move should be handled separately
+        np indicates that pawn promotion should not be performed
+        (np = no promotion)
         """
         if not special:
             promotion = check_promotion(piece,y)
@@ -82,13 +93,15 @@ class Board:
             piece.rect.x = x * 60
             piece.rect.y = y * 60
             self.array[oldy][oldx] = None
-            if promotion and not mm:
-                print("Check promotion: ", True)
+
+            # pawn promotion is more complex and requires more steps
+            if promotion and not np:
                 self.array[y][x] = Queen(piece.color,y,x)
                 if piece.color == "w":
                     self.score -= 9 #losing a pawn but gaining a queen
                 elif piece.color == "b":
                     self.score += 9
+                # return the pawn and the queen, so the graphics can be easily updated
                 return self.array[y][x], piece
             else:
                 self.array[y][x] = piece

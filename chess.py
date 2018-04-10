@@ -139,6 +139,7 @@ def run_game():
                             # update the 'score' of the board
                             if dest:
                                 board.score -= board.pvalue_dict[type(dest)]
+
                         else:  # THIS MOVE IS IN CHECK, we have to reverse it
                             board.move_piece(piece, oldy, oldx)
                             if type(piece) == King or type(piece) == Rook:
@@ -152,6 +153,8 @@ def run_game():
                                 sprites.append(pawn_promotion[1])
                             piece.highlight()
 
+                            # different sidemenus, whether or not you're
+                            # currently in check
                             if checkWhite:
                                 update_sidemenu(
                                     'You have to get out\nof check!', (255, 0, 0))
@@ -173,13 +176,16 @@ def run_game():
 
                     # square selected is a potential special move
                     elif special_moves and square in special_moves:
+
                         special = special_moves[square]
+                        # special move is castling, perform it
                         if (special == "CR" or special == "CL") and type(piece) == King:
                             board.move_piece(
                                 piece, square[0], square[1], special)
                             selected = False
                             player = "AI"
 
+                        # special move is not valid
                         else:
                             update_sidemenu('Invalid move!', (255, 0, 0))
                             pygame.display.update()
@@ -203,23 +209,29 @@ def run_game():
 
         # AI's turn
         elif player == "AI":
+
+            # get a move from the minimax algorithm, at a search depth of 3
             value, move = minimax(board, 3, float(
                 "-inf"), float("inf"), True, trans_table)
 
+            # this indicates an AI in checkmate; it has no moves
             if value == float("-inf") and move == 0:
                 print(value)
                 print(move)
-                # AI IS IN CHECKMATE
                 gameover = True
                 player = 1
                 update_sidemenu(
                     'Checkmate!\nYou Win!\nPress any key to quit.', (255, 255, 0))
 
+            # perform the AI's move
             else:
                 start = move[0]
                 end = move[1]
                 piece = board.array[start[0]][start[1]]
                 dest = board.array[end[0]][end[1]]
+
+                # deal with a possible pawn promotion, the same way it is dealt
+                # above for the player
                 pawn_promotion = board.move_piece(piece, end[0], end[1])
                 if pawn_promotion:
                     all_sprites_list.add(pawn_promotion[0])
@@ -231,7 +243,9 @@ def run_game():
                     all_sprites_list.remove(dest)
                     sprites.remove(dest)
                     board.score += board.pvalue_dict[type(dest)]
-                player = 1
+
+                # check to see if the player is now in check, as a result of the
+                # AI's move
                 attacked = move_gen(board, "b", True)
                 if (board.white_king.y, board.white_king.x) in attacked:
                     update_sidemenu('Your Turn: Check!', (255, 0, 0))
@@ -239,14 +253,17 @@ def run_game():
                 else:
                     update_sidemenu('Your Turn!', (255, 255, 255))
                     checkWhite = False
+
+                player = 1
                 print(board.score)
-                # print('SIDE MENU UPDATE')
+
             if value == float("inf"):
                 print("Player checkmate")
                 gameover = True
                 update_sidemenu(
                     'Checkmate!\nCPU Wins!\nPress any key to quit.', (255, 255, 0))
 
+        # update the screen and the sprites after the move has been
         screen.blit(bg, (0, 0))
         all_sprites_list.draw(screen)
         pygame.display.update()

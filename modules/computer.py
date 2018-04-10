@@ -4,17 +4,17 @@ def matrix_to_tuple(array, empty_array):
     """
     Given a 2D list, converts it to 2D tuple. This is useful for using a
     matrix as a key in a dictionary
-    (an empty 8x8 should be given, just for efficiency)
+    (an empty 8x8 should be provided, just for efficiency)
     """
     for i in range(8):
         empty_array[i] = tuple(array[i])
     return tuple(empty_array)
 
-# possible improvement: Make a list of all the pieces, so you don't have
-# to iterate through the whole board for move gen
-
 def check_castling(board,c,side):
-
+    '''
+    Checks if castling is possible, given a board state, a color, and the side
+    for the castle
+    '''
     castleLeft = False
     castleRight = False
 
@@ -23,27 +23,31 @@ def check_castling(board,c,side):
         leftRook = board.white_rook_left
         rightRook =  board.white_rook_right
         attacked = move_gen(board, "b", True)
-        i = 7
+        row = 7
     elif c == "b":
         king = board.black_king
         leftRook = board.black_rook_left
         rightRook =  board.black_rook_right
         attacked = move_gen(board, "w", True)
-        i = 0
+        row = 0
 
     squares = set()
 
-    if king.moved == False:
-    # left castle, check the rook
-        if board.array[i][0] == leftRook and leftRook.moved == False:
-            squares = {(i,1),(i,2),(i,3),(i,1),(i,2),(i,3)}
-            if not board.array[i][1] and not board.array[i][2] and not board.array[i][3]:
+    if king.moved == False: # cannot castle if the king has moved
+
+    # left castle, check to see if the rook has moved
+        if board.array[row][0] == leftRook and leftRook.moved == False:
+
+            #squares between the rook and the king have to be empty and cannot be in check
+            squares = {(row,1),(row,2),(row,3)}
+            if not board.array[row][1] and not board.array[row][2] and not board.array[row][3]:
                 if not attacked.intersection(squares):
                     castleLeft = True
-    #right castle
-        if board.array[i][7] == rightRook and rightRook.moved == False:
-            squares = {(i,6),(i,5)}
-            if not board.array[i][6] and not board.array[i][5]:
+    # right castle
+        if board.array[row][7] == rightRook and rightRook.moved == False:
+
+            squares = {(row,6),(row,5)}
+            if not board.array[row][6] and not board.array[row][5]:
                 if not attacked.intersection(squares):
                     castleRight = True
 
@@ -53,6 +57,14 @@ def check_castling(board,c,side):
         return castleLeft
 
 def special_move_gen(board,color,moves = None):
+    '''
+    From a board state and a color, returns a move dict with the possible
+    special moves. Currenly only returns castling moves as pawn promotion is
+    implemented in a different way.
+
+    Key in the moves dict is where the player has to 'click'. Value is the
+    special move code
+    '''
     if moves == None:
         moves = dict()
     if color == "w":
@@ -82,9 +94,8 @@ def move_gen(board, color, attc = False):
         moves = set()
     else:
         moves = dict()
-        #moves = special_move_gen(board,color,moves)
-    # Generates all the legal moves and stores them in whitemoves, blackmoves
 
+    # Generates all the legal moves for all the pieces, then combines them
     for j in range(8):
         for i in range(8):
             piece = board.array[i][j]
@@ -93,26 +104,12 @@ def move_gen(board, color, attc = False):
                 if legal_moves and not attc:
                     moves[(i,j)] = legal_moves
                 elif legal_moves and attc:
-                    #print('hey')
-                    #print(legal_moves)
                     moves = moves.union(legal_moves)
 
-    '''
-    for piece in sprites:
-            if piece.color == color:
-                legal_moves = piece.gen_legal_moves(board)
-                if legal_moves and not attc:
-                    moves[(piece.y,piece.x)] = legal_moves
-                elif legal_moves and attc:
-                    #print('hey')
-                    #print(legal_moves)
-                    moves = moves.union(legal_moves)
-    '''
     return moves
 
-# IF FUNCTION RETURNS value= -INF, AI IS IN CHECKMATE
-# OR move = 0
-# (returning +inf for value MIGHT indicate player checkmate. not sure)
+# IF FUNCTION RETURNS value= -INF (or move = 0), AI IS IN CHECKMATE
+# (returning +inf for value indicates player checkmate. not sure)
 def minimax(board, depth, alpha, beta, maximizing, memo):
     """
     Minimax algorithm with alpha-beta pruning determines the best move for
@@ -120,9 +117,14 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
     Return: bestValue - score of the board resulting from the best move
             move - tuple containing the start coord and the end coord of the best move
             ex. ((y1,x1),(y2,x2)) -> the piece at (y1,x1) should move to (y2,x2)
+
+    Note: 0 is used as a placeholder, when we don't care about the move (eg. the
+    algorithm is exploring options, don't need to return a 'move')
     """
 
+    # convert the 2D list to a tuple, so it can be used as a key in memo
     tuple_mat = matrix_to_tuple(board.array, board.empty)
+
     if tuple_mat in memo and depth != 3: # set this to the depth of the initial call
         return memo[tuple_mat], 0
 
@@ -133,84 +135,82 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
     if maximizing:
         bestValue = float("-inf")
         black_moves = move_gen(board,"b")
+
+        # explore all the potential moves from this board state
         for start, move_set in black_moves.items():
-            #if start = SPECIAL MOVE
             for end in move_set:
 
-
-                #develop the 'child'
+                # perform the move
+                # preserve the start and the end pieces, in case the move
+                # needs to be reversed
                 piece = board.array[start[0]][start[1]]
                 dest = board.array[end[0]][end[1]]
-                to_update = board.move_piece(piece,end[0],end[1],False)
+
+                # if a pawn promotion occurs, return the pieces involved
+                pawn_promotion = board.move_piece(piece,end[0],end[1],False)
 
                 # see if the move puts you in check
                 attacked = move_gen(board,"w",True) #return spaces attacked by white
-
                 if (board.black_king.y,board.black_king.x) in attacked:
+                    # reverse the move
                     board.move_piece(piece,start[0],start[1],False, True)
                     board.array[end[0]][end[1]] = dest
-                    if to_update:
-                        board.score -= 9
+                    if pawn_promotion:
+                        board.score -= 9 # revert the score from the promotion
+                    continue # the move is illegal, thus we don't care
 
-
-                    continue
-
-
-                #change the board score
+                #change the score if a piece was captured
                 if dest != None:
                     board.score += board.pvalue_dict[type(dest)]
 
+                # search deeper for the children, this time its the minimizing
+                #player's turn
                 v, __ = minimax(board, depth - 1,alpha,beta, False, memo)
 
-
-                # revert the board
-                #piece = board.array[end[0]][end[1]]
+                # revert the board and the score
                 board.move_piece(piece,start[0],start[1],False, True)
                 board.array[end[0]][end[1]] = dest
-                if to_update:
+                if pawn_promotion:
                     board.score -= 9
+                if dest != None:
+                    board.score -= board.pvalue_dict[type(dest)]
 
-                if v >= bestValue:
-
-                    move = (start, (end[0],end[1])) # preserve the move
+                if v >= bestValue: # move is better than best, store it
+                    move = (start, (end[0],end[1]))
 
                 bestValue = max(bestValue, v)
                 alpha = max(alpha, bestValue)
-
-                #revert the score
-                if dest != None:
-                    board.score -= board.pvalue_dict[type(dest)]
 
                 if beta <= alpha:
                     return bestValue, move
         try:
             return bestValue, move
         except:
-            return bestValue, 0
+            return bestValue, 0 # no best move was found
 
 
     else:    #(* minimizing player *)
         bestValue = float("inf")
         white_moves = move_gen(board,"w")
+
+        # explore all the potential moves from this board state
         for start, move_set in white_moves.items():
             for end in move_set:
 
-                #DEVELOP the child
+                # perform the move
                 piece = board.array[start[0]][start[1]]
                 dest = board.array[end[0]][end[1]]
-                to_update = board.move_piece(piece,end[0],end[1],False)
+                pawn_promotion = board.move_piece(piece,end[0],end[1],False)
 
-                # see if the move puts your in check
+                # see if the move puts you in check
                 attacked = move_gen(board,"b",True) #return spaces attacked by white
 
                 if (board.white_king.y,board.white_king.x) in attacked:
-                    #piece = board.array[end[0]][end[1]]
                     board.move_piece(piece,start[0],start[1],False,True)
                     board.array[end[0]][end[1]] = dest
-                    if to_update:
+                    if pawn_promotion:
                         board.score += 9
-                    continue
-
+                    continue # move is illegal, don't consider it
 
                 #update the score
                 if dest != None:
@@ -220,14 +220,11 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
                 bestValue = min(v, bestValue)
                 beta = min(beta,bestValue)
 
-                #preserve shit
-                #piece = board.array[end[0]][end[1]]
+                # reverse the move, revert the score
                 board.move_piece(piece,start[0],start[1],False,True)
                 board.array[end[0]][end[1]] = dest
-                if to_update:
+                if pawn_promotion:
                     board.score += 9
-
-                # revert the score
                 if dest != None:
                     board.score += board.pvalue_dict[type(dest)]
 
