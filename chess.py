@@ -283,8 +283,9 @@ def game_over():
     crown = pygame.image.load("assets/crown.png").convert_alpha()
     crown = pygame.transform.scale(crown, (80, 60))
     screen.blit(crown, (520, 20))
+    pygame.display.update()
+    pygame.time.wait(2000)
     pygame.event.clear()
-    pygame.time.wait(1000)
     while True:
         for event in pygame.event.get():
             # print(event.type)
