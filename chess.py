@@ -98,13 +98,14 @@ def run_game():
                 # piece is selected, now move it somewhere
                 elif event.type == pygame.MOUSEBUTTONDOWN and selected:
                     square = select_square()
-                    special_moves = special_move_gen(board,"w")
+                    special_moves = special_move_gen(board, "w")
 
                     if square in player_moves:
                         oldx = piece.x  # preserve, in case we have to reverse the move
                         oldy = piece.y
                         dest = board.array[square[0]][square[1]]
-                        to_update = board.move_piece(piece, square[0], square[1])
+                        to_update = board.move_piece(
+                            piece, square[0], square[1])
                         if to_update:
                             all_sprites_list.add(to_update[0])
                             sprites.append(to_update[0])
@@ -161,7 +162,8 @@ def run_game():
                     elif special_moves and square in special_moves:
                         special = special_moves[square]
                         if (special == "CR" or special == "CL") and type(piece) == King:
-                            board.move_piece(piece,square[0],square[1],special)
+                            board.move_piece(
+                                piece, square[0], square[1], special)
                             selected = False
                             player = "AI"
 
@@ -170,7 +172,8 @@ def run_game():
                             pygame.display.update()
                             pygame.time.wait(1000)
                             if checkWhite:
-                                update_sidemenu('Your Turn: Check!', (255, 0, 0))
+                                update_sidemenu(
+                                    'Your Turn: Check!', (255, 0, 0))
                             else:
                                 update_sidemenu('Your turn!', (255, 255, 255))
 
@@ -315,20 +318,20 @@ def welcome():
         'Press any key to begin!', False, (255, 255, 255))
     screen.blit(textsurface, (250, 170))
 
-    arun = pygame.image.load("assets/arun.jpg").convert()
-    tamara = pygame.image.load("assets/tamara.jpg").convert()
-    arun = pygame.transform.scale(arun, (200, 200))
-    tamara = pygame.transform.scale(tamara, (200, 200))
-    screen.blit(arun, (100, 230))
-    screen.blit(tamara, (500, 230))
+    menuking = pygame.image.load("assets/menuking.png").convert_alpha()
+    menuqueen = pygame.image.load("assets/menuqueen.png").convert_alpha()
+    menuking = pygame.transform.scale(menuking, (200, 200))
+    menuqueen = pygame.transform.scale(menuqueen, (200, 200))
+    screen.blit(menuking, (100, 230))
+    screen.blit(menuqueen, (500, 230))
 
     textsurface = myfont.render(
         'Arun Woosaree', False, (255, 255, 255))
-    screen.blit(textsurface, (100, 440))
+    screen.blit(textsurface, (100, 420))
 
     textsurface = myfont.render(
         'Tamara Bojovic', False, (255, 255, 255))
-    screen.blit(textsurface, (500, 440))
+    screen.blit(textsurface, (500, 420))
     while True:
         for event in pygame.event.get():
             # print(event.type)
