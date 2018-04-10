@@ -38,21 +38,26 @@ def move_check(your_color, y, x, board):
 class Piece(pygame.sprite.Sprite):
     """
     Piece in the chess game. Stores the color and the position in the board
+    Each piece inherits from this class, which inherits from pygame sprite class
+    inherit-ception
     """
 
     def __init__(self, color, y, x):
         super().__init__()
         self.color = color
+
+        # position on board matrix
         self.x = x
         self.y = y
+
+        # allows for transparency
         self.image = pygame.Surface((60, 60), pygame.SRCALPHA, 32)
         self.image.convert_alpha()
-        # self.image.fill((0, 255, 0))
-        # self.image.set_colorkey((0, 255, 0))
-        # self.rect = x * 60, y * 60
+
+        # position on screen surface
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = x * 60, y * 60
-        # print(self.rect)
+
         self.highlighed = False
 
     def line_attack_gen(self, board):
@@ -121,14 +126,20 @@ class Piece(pygame.sprite.Sprite):
                     break
         return move_set
 
-    # def update_pos():
-    #     self.rect = self.x * 60, self.y * 60
     def highlight(self):
+        '''
+        called when the user clicked on a sprite of his/hers
+        this draws a purple square around the selected piece
+        '''
         pygame.draw.rect(self.image, (138, 43, 226), (0, 0, 60, 60),  5)
         self.highlighed = not self.highlighed
 
     def unhighlight(self):
-        # TODO
+        '''
+        redraws entire sprite to get rid of the purple square, since
+        blitting a transparent portion over the square of course
+        doesn't update that part
+        '''
         self.image = pygame.Surface((60, 60), pygame.SRCALPHA, 32)
         self.image.convert_alpha()
         self.image.blit(self.sprite, (0, 0))
@@ -140,6 +151,9 @@ class Pawn(Piece):
     def __init__(self, color, y, x):
         super().__init__(color, y, x)
         self.symbol = "P"
+
+        # load the corresponding sprite image and draw on own surface.
+        # similar process for the other pieces
         self.sprite = pygame.image.load("assets/{}pawn.png".format(self.color))
         self.image.blit(self.sprite, (0, 0))
 
