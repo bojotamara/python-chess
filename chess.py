@@ -45,19 +45,23 @@ clock = pygame.time.Clock()
 
 
 def select_piece(color):
+    '''
+    Select a piece on the chessboard
+    '''
     pos = pygame.mouse.get_pos()
     # get a list of all sprites that are under the mouse cursor
     clicked_sprites = [s for s in sprites if s.rect.collidepoint(pos)]
 
     # only highlight, and return if its the player's piece
     if len(clicked_sprites) == 1 and clicked_sprites[0].color == color:
-        # clicked_sprites[0].highlight(screen)
-        # print(clicked_sprites[0])
         clicked_sprites[0].highlight()
         return clicked_sprites[0]
 
 
 def select_square():
+    '''
+    Returns the chess board coordinates of where the mouse selected
+    '''
     x, y = pygame.mouse.get_pos()
     x = x // 60
     y = y // 60
@@ -76,7 +80,7 @@ def run_game():
     gameover = False
 
     selected = False  # indicates whether a piece is selected yet
-    trans_table = dict()
+    trans_table = dict() # holds previously computed minimax values
 
     while not gameover:
 
@@ -89,8 +93,8 @@ def run_game():
                 # select a piece to move
                 elif event.type == pygame.MOUSEBUTTONDOWN and not selected:
                     piece = select_piece("w")
-                    # print(piece)
-                    # a white piece was selected
+
+                    # a white piece was selected, generate pseudo-legal moves
                     if piece != None:
                         player_moves = piece.gen_legal_moves(board)
                         selected = True
@@ -100,34 +104,42 @@ def run_game():
                     square = select_square()
                     special_moves = special_move_gen(board,"w")
 
+                    # square selected is a pseudo-legal move
                     if square in player_moves:
                         oldx = piece.x  # preserve, in case we have to reverse the move
                         oldy = piece.y
+                        # preserve the piece we're potentially eating
                         dest = board.array[square[0]][square[1]]
-                        to_update = board.move_piece(piece, square[0], square[1])
-                        if to_update:
-                            all_sprites_list.add(to_update[0])
-                            sprites.append(to_update[0])
-                            all_sprites_list.remove(to_update[1])
-                            sprites.remove(to_update[1])
-                        if type(piece) == King or type(piece) == Rook:
+
+                        # attempt to move the piece
+                        # if a pawn promotion occurs, return the sprites that
+                        # we need to update
+                        pawn_promotion = board.move_piece(piece, square[0], square[1])
+
+                        if pawn_promotion: # remove the pawn sprite, add the queen sprite
+                            all_sprites_list.add(pawn_promotion[0])
+                            sprites.append(pawn_promotion[0])
+                            all_sprites_list.remove(pawn_promotion[1])
+                            sprites.remove(pawn_promotion[1])
+                        if type(piece) == King or type(piece) == Rook: # this is needed for proper castling
                             piece.moved = True
-                        if dest:
+                        if dest: # remove the sprite of the piece that was eaten
                             all_sprites_list.remove(dest)
                             sprites.remove(dest)
-                        # see if move puts you in check
+
+                        # Now we have to see if move puts you in check
+                        # generate a set of the attacked squared
                         attacked = move_gen(board, "b", True)
                         if (board.white_king.y, board.white_king.x) not in attacked:
-                            # MOVE NOT IN CHECK WE GOOD
+                            # move not in check, we're good
                             selected = False
                             player = "AI"
-                            # update avatar
                             update_sidemenu('CPU Thinking...', (255, 255, 255))
 
-                            # delete sprite
+                            # update the 'score' of the board
                             if dest:
                                 board.score -= board.pvalue_dict[type(dest)]
-                        else:  # THIS MOVE IS IN CHECK
+                        else:  # THIS MOVE IS IN CHECK, we have to reverse it
                             board.move_piece(piece, oldy, oldx)
                             if type(piece) == King or type(piece) == Rook:
                                 piece.moved = False
@@ -135,9 +147,9 @@ def run_game():
                             if dest:
                                 all_sprites_list.add(dest)
                                 sprites.append(dest)
-                            if to_update:
-                                all_sprites_list.add(to_update[1])
-                                sprites.append(to_update[1])
+                            if pawn_promotion:
+                                all_sprites_list.add(pawn_promotion[1])
+                                sprites.append(pawn_promotion[1])
                             piece.highlight()
 
                             if checkWhite:
@@ -154,10 +166,12 @@ def run_game():
                                 pygame.time.wait(1000)
                                 update_sidemenu('Your turn!', (255, 255, 255))
 
-                    elif (piece.y, piece.x) == square:  # CANCEL MOVE
+                    # cancel the move
+                    elif (piece.y, piece.x) == square:
                         piece.unhighlight()
                         selected = False
 
+                    # square selected is a potential special move
                     elif special_moves and square in special_moves:
                         special = special_moves[square]
                         if (special == "CR" or special == "CL") and type(piece) == King:
@@ -174,7 +188,8 @@ def run_game():
                             else:
                                 update_sidemenu('Your turn!', (255, 255, 255))
 
-                    else:  # INVALID NORMAL MOVE;
+                    # move is invalid
+                    else:
 
                         update_sidemenu('Invalid move!', (255, 0, 0))
                         pygame.display.update()
@@ -185,7 +200,7 @@ def run_game():
                             update_sidemenu('Your turn!', (255, 255, 255))
 
         # AI's turn
-        else:
+        elif player == "AI":
             value, move = minimax(board, 3, float(
                 "-inf"), float("inf"), True, trans_table)
 
@@ -203,12 +218,12 @@ def run_game():
                 end = move[1]
                 piece = board.array[start[0]][start[1]]
                 dest = board.array[end[0]][end[1]]
-                to_update = board.move_piece(piece, end[0], end[1])
-                if to_update:
-                    all_sprites_list.add(to_update[0])
-                    sprites.append(to_update[0])
-                    all_sprites_list.remove(to_update[1])
-                    sprites.remove(to_update[1])
+                pawn_promotion = board.move_piece(piece, end[0], end[1])
+                if pawn_promotion:
+                    all_sprites_list.add(pawn_promotion[0])
+                    sprites.append(pawn_promotion[0])
+                    all_sprites_list.remove(pawn_promotion[1])
+                    sprites.remove(pawn_promotion[1])
 
                 if dest:
                     all_sprites_list.remove(dest)
