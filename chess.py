@@ -247,6 +247,7 @@ def run_game():
                     sprites.remove(dest)
                     board.score += board.pvalue_dict[type(dest)]
 
+                player = 1
                 # check to see if the player is now in check, as a result of the
                 # AI's move
                 attacked = move_gen(board, "b", True)
@@ -257,7 +258,7 @@ def run_game():
                     update_sidemenu('Your Turn!', (255, 255, 255))
                     checkWhite = False
 
-                player = 1
+
                 print(board.score)
 
             if value == float("inf"):
