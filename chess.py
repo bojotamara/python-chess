@@ -1,6 +1,6 @@
 # ------------- INITIALIZATIONS-------------------
 import pygame
-import copy
+import sys
 
 
 pygame.init()  # essential for pygame
@@ -90,7 +90,7 @@ def run_game():
         if player == 1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
+                    sys.exit()
 
                 # select a piece to move
                 elif event.type == pygame.MOUSEBUTTONDOWN and not selected:
@@ -287,6 +287,7 @@ def game_over():
     pygame.display.update()
     pygame.time.wait(2000)
     pygame.event.clear()
+    pygame.display.update()
     while True:
         for event in pygame.event.get():
             # print(event.type)
@@ -296,7 +297,7 @@ def game_over():
             elif event.type == pygame.QUIT:
                 import sys
                 sys.exit()
-        pygame.display.update()
+
     os.remove('assets/avatar.png')
 
 
@@ -397,6 +398,7 @@ def welcome():
     screen.blit(textsurface, (500, 420))
 
     # infinite loop until player wants to begin
+    pygame.display.update()
     pygame.event.clear()
     while True:
         for event in pygame.event.get():
@@ -405,9 +407,8 @@ def welcome():
             if event.type == pygame.KEYUP or event.type == pygame.MOUSEBUTTONUP:
                 return
             elif event.type == pygame.QUIT:
-                import sys
                 sys.exit()
-        pygame.display.update()
+
 
 
 if __name__ == "__main__":
