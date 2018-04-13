@@ -19,6 +19,8 @@ special moves: castling, and promotion. The program automatically detects check
 and checkmate, and for the latter, ends the game and declares the winner.
 
 For more specific instructions on how to play, see 'Usage Instructions'.
+
+---
 ## Setup Instructions:
 ###### Make sure you're using python 3
 
@@ -35,17 +37,29 @@ sudo pacman -S python-pip
 pip -m install --user pygame
 python chess.py
 ```
+###### If for whatever reason, pygame fails to install try:
+
+###### `sudo pip3 install pygame` (Ubuntu)
+
+###### `sudo pip install pygame` (Arch)
+
+###### also, maybe updating pip will help:
+
+###### `sudo pip install --upgrade-pip`
 
 ### Windows
 ###### In the installer, make sure to add python to your PATH
+Install the latest version of python 3 (Tested on 3.6.4 and 3.6.5)
+
 https://www.python.org/downloads/release/python-365/
-Open a command prompt window:
+
+Then, Open a command prompt window:
 ```
 pip -m install --user pygame
 python chess.py
 ```
-
-
+---
+## Playing the Game:
 
 #### Moving A Piece On Your Turn:
 Use the mouse to select one of your pieces and then select the square you want to move it to.
@@ -98,6 +112,7 @@ Contains all the chess piece classes
 ##### assets/
 Contains picture assets
 
+---
 
 ## Acknowledgments:
 
