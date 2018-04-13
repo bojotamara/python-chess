@@ -49,9 +49,12 @@ Usage Instructions:
 
 Moving A Piece On Your Turn:
 Use the mouse to select one of your pieces and then select the square you want to move it to.
+If you selected one of your pieces, the square that piece is on will be highlighted
+by a purple square. 
 If you choose an invalid place to move to, a message will be displayed informing
 you of the rule infringement, and you will be able to try again. If you decide
-to not move this piece, just select it again to cancel the move
+to not move this piece, just select it again to cancel the move, and the purple
+square will go away to indicate that you deselected that piece.
 
 Checking:
 If your opponent places you in check, a message will be displayed informing you
@@ -87,8 +90,8 @@ Run this if you want to play the game. It contains the main game logic loop.
 
 modules/pieces.py:
 Contains all the chess piece classes. Each piece type (such as rook, queen) is
-a subclass of the generic piece class. Each piece contains a move generator, that
-generates all the legal moves for that piece.
+a subclass of the generic piece class, which inherits from the pygame Sprite class.
+Each piece contains a move generator, that generates all the legal moves for that piece.
 
 modules/board.py:
 Contains the board class, which is a representation of the board in a 8x8 array.
