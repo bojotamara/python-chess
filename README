@@ -1,5 +1,5 @@
 Names:
-Arun Woosaree
+Arun Woosaree 1514457
 Tamara Bojovic 1511502
 
 -------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ Usage Instructions:
 Moving A Piece On Your Turn:
 Use the mouse to select one of your pieces and then select the square you want to move it to.
 If you selected one of your pieces, the square that piece is on will be highlighted
-by a purple square. 
+by a purple square.
 If you choose an invalid place to move to, a message will be displayed informing
 you of the rule infringement, and you will be able to try again. If you decide
 to not move this piece, just select it again to cancel the move, and the purple
