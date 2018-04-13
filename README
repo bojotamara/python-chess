@@ -33,6 +33,7 @@ Install pygame by running
 --------------------------------
 |   sudo pip install pygame    |
 --------------------------------
+You will be prompted to enter the VM's password. It's 'cmput274'.
 
 Once pygame is installed, run the game by
 
