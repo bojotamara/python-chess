@@ -13,7 +13,7 @@ def matrix_to_tuple(array, empty_array):
 def check_castling(board,c,side):
     '''
     Checks if castling is possible, given a board state, a color, and the side
-    for the castle
+    for the castle.
     '''
     castleLeft = False
     castleRight = False
@@ -34,18 +34,16 @@ def check_castling(board,c,side):
     squares = set()
 
     if king.moved == False: # cannot castle if the king has moved
-
-    # left castle, check to see if the rook has moved
+        # left castle, check to see if the rook has moved
         if board.array[row][0] == leftRook and leftRook.moved == False:
-
             #squares between the rook and the king have to be empty and cannot be in check
             squares = {(row,1),(row,2),(row,3)}
             if not board.array[row][1] and not board.array[row][2] and not board.array[row][3]:
                 if not attacked.intersection(squares):
                     castleLeft = True
-    # right castle
+        # right castle
         if board.array[row][7] == rightRook and rightRook.moved == False:
-
+            #squares between the rook and the king have to be empty and cannot be in check
             squares = {(row,6),(row,5)}
             if not board.array[row][6] and not board.array[row][5]:
                 if not attacked.intersection(squares):
@@ -59,11 +57,11 @@ def check_castling(board,c,side):
 def special_move_gen(board,color,moves = None):
     '''
     From a board state and a color, returns a move dict with the possible
-    special moves. Currenly only returns castling moves as pawn promotion is
+    special moves. Currently only returns castling moves as pawn promotion is
     implemented in a different way.
 
-    Key in the moves dict is where the player has to 'click'. Value is the
-    special move code
+    Key in the moves dict is where the player has to 'click' to perform the move.
+    Value is the special move code.
     '''
     if moves == None:
         moves = dict()
@@ -84,10 +82,12 @@ def special_move_gen(board,color,moves = None):
 
 def move_gen(board, color, attc = False):
     """
-    Generates the legal moves from a board state, for a specific color.
-    Return:
+    Generates the pseudo-legal moves from a board state, for a specific color.
+    Does not check to see if the move puts you in check, this must be done
+    outside of the function.
+    Returns:
     attc = False: moves (dict) - maps coord (y,x) to a set containing the coords of
-                                where is can legally move
+                                where it can legally move
     attc = True: moves (set) - the set of attacked squares for that color.
     """
     if attc:
@@ -109,17 +109,18 @@ def move_gen(board, color, attc = False):
     return moves
 
 # IF FUNCTION RETURNS value= -INF (or move = 0), AI IS IN CHECKMATE
-# (returning +inf for value indicates player checkmate. not sure)
+# (returning +inf for value indicates player checkmate)
 def minimax(board, depth, alpha, beta, maximizing, memo):
     """
     Minimax algorithm with alpha-beta pruning determines the best move for
     black from the current board state.
-    Return: bestValue - score of the board resulting from the best move
+    Returns: bestValue - score of the board resulting from the best move
             move - tuple containing the start coord and the end coord of the best move
             ex. ((y1,x1),(y2,x2)) -> the piece at (y1,x1) should move to (y2,x2)
 
-    Note: 0 is used as a placeholder, when we don't care about the move (eg. the
-    algorithm is exploring options, don't need to return a 'move')
+    Note: 0 is used as a placeholder when returning from the function, when we
+    don't care about the move (eg. the algorithm is exploring options, don't
+    need to return a 'move')
     """
 
     # convert the 2D list to a tuple, so it can be used as a key in memo
@@ -157,14 +158,14 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
                     board.array[end[0]][end[1]] = dest
                     if pawn_promotion:
                         board.score -= 9 # revert the score from the promotion
-                    continue # the move is illegal, thus we don't care
+                    continue # the move is illegal, thus we don't care and move on
 
                 #change the score if a piece was captured
                 if dest != None:
                     board.score += board.pvalue_dict[type(dest)]
 
                 # search deeper for the children, this time its the minimizing
-                #player's turn
+                # player's turn
                 v, __ = minimax(board, depth - 1,alpha,beta, False, memo)
 
                 # revert the board and the score
@@ -186,7 +187,7 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
         try:
             return bestValue, move
         except:
-            return bestValue, 0 # no best move was found
+            return bestValue, 0 # no best move was found, indicates AI in checkmate
 
 
     else:    #(* minimizing player *)
@@ -204,7 +205,6 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
 
                 # see if the move puts you in check
                 attacked = move_gen(board,"b",True) #return spaces attacked by white
-
                 if (board.white_king.y,board.white_king.x) in attacked:
                     board.move_piece(piece,start[0],start[1],False,True)
                     board.array[end[0]][end[1]] = dest
@@ -212,11 +212,12 @@ def minimax(board, depth, alpha, beta, maximizing, memo):
                         board.score += 9
                     continue # move is illegal, don't consider it
 
-                #update the score
+                # update the score
                 if dest != None:
                     board.score -= board.pvalue_dict[type(dest)]
 
                 v, __ = minimax(board, depth - 1,alpha,beta, True, memo)
+                
                 bestValue = min(v, bestValue)
                 beta = min(beta,bestValue)
 

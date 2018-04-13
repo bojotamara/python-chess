@@ -2,7 +2,7 @@ from modules.pieces import *
 
 def check_promotion(piece,y):
     '''
-    Checks to see if a pawn is eligble for promotion on it's next move
+    Checks to see if a pawn is eligible for promotion on it's next move.
     '''
     if piece.color == "w":
         row = 1
@@ -48,7 +48,7 @@ class Board:
 
     def special_move(self,piece, y,x,special):
         '''
-        Allows castling to be perfomed; it requires the movement of two pieces
+        Allows castling to be perfomed; it requires the movement of two pieces.
         **This is only called within the move_piece function
         '''
         color = piece.color
@@ -81,7 +81,7 @@ class Board:
         """
         Moves an instance of the piece class to (y,x).
         Special indiates a special move should be handled separately
-        np indicates that pawn promotion should not be performed
+        np indicates that pawn promotion should not be performed.
         (np = no promotion)
         """
         if not special:
@@ -98,7 +98,7 @@ class Board:
             if promotion and not np:
                 self.array[y][x] = Queen(piece.color,y,x)
                 if piece.color == "w":
-                    self.score -= 9 #losing a pawn but gaining a queen
+                    self.score -= 9 # losing a pawn but gaining a queen
                 elif piece.color == "b":
                     self.score += 9
                 # return the pawn and the queen, so the graphics can be easily updated
@@ -111,7 +111,7 @@ class Board:
 
     def print_to_terminal(self):
         """
-        Prints the board to the terminal
+        Prints the board to the terminal.
         """
         for j in range(8):
             arr = []

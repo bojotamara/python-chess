@@ -2,7 +2,6 @@
 import pygame
 import sys
 
-
 pygame.init()  # essential for pygame
 pygame.font.init()  # for text
 
@@ -13,18 +12,14 @@ pygame.display.set_caption('Python Chess Game')
 from modules.board import *
 from modules.computer import *
 
-
-# blit puts image on the surface
-
 # load images
 bg = pygame.image.load("assets/chessboard.png").convert()
 sidebg = pygame.image.load("assets/woodsidemenu.jpg").convert()
-player = 1  # 'AI' otherwise
+player = 1  # 'AI' for the computer player
 myfont = pygame.font.Font("assets/Roboto-Black.ttf", 30)
 clippy = pygame.image.load("assets/Clippy.png").convert_alpha()
 clippy = pygame.transform.scale(clippy, (320, 240))
 playeravatar = None
-
 
 # board matrix, create instance of board class from modules.board
 board = Board()
@@ -43,10 +38,10 @@ clock = pygame.time.Clock()
 
 # ----------- FUNCTIONS---------------------------------
 
-
 def select_piece(color):
     '''
-    Select a piece on the chessboard
+    Select a piece on the chessboard. Only returns if a valid piece was
+    selected based on the color
     '''
     pos = pygame.mouse.get_pos()
     # get a list of all sprites that are under the mouse cursor
@@ -60,7 +55,7 @@ def select_piece(color):
 
 def select_square():
     '''
-    Returns the chess board coordinates of where the mouse selected
+    Returns the chess board coordinates of where the mouse selected.
     '''
     x, y = pygame.mouse.get_pos()
     x = x // 60
@@ -70,7 +65,7 @@ def select_square():
 
 def run_game():
     '''
-    main program loop for the chess game
+    Main program loop for the chess game.
     '''
     # clippy avatar for computer player
     global player, playeravatar, clippy
@@ -110,12 +105,12 @@ def run_game():
                     if square in player_moves:
                         oldx = piece.x  # preserve, in case we have to reverse the move
                         oldy = piece.y
-                        # preserve the piece we're potentially eating
+                        # preserve the piece we're potentially capturing
                         dest = board.array[square[0]][square[1]]
 
                         # attempt to move the piece
-                        # if a pawn promotion occurs, return the sprites that
-                        # we need to update
+                        # if a pawn promotion occurs, return the pieces that
+                        # we need to update in the sprites list
                         pawn_promotion = board.move_piece(
                             piece, square[0], square[1])
 
@@ -124,10 +119,11 @@ def run_game():
                             sprites.append(pawn_promotion[0])
                             all_sprites_list.remove(pawn_promotion[1])
                             sprites.remove(pawn_promotion[1])
+
                         # this is needed for proper castling
                         if type(piece) == King or type(piece) == Rook:
                             piece.moved = True
-                        if dest:  # remove the sprite of the piece that was eaten
+                        if dest:  # remove the sprite of the piece that was captured
                             all_sprites_list.remove(dest)
                             sprites.remove(dest)
 
@@ -157,7 +153,7 @@ def run_game():
                                 sprites.append(pawn_promotion[1])
                             piece.highlight()
 
-                            # different sidemenus, whether or not you're
+                            # different sidemenus depend on whether or not you're
                             # currently in check
                             if checkWhite:
                                 update_sidemenu(
@@ -173,7 +169,7 @@ def run_game():
                                 pygame.time.wait(1000)
                                 update_sidemenu('Your turn!', (255, 255, 255))
 
-                    # cancel the move
+                    # cancel the move, you've selected the same square
                     elif (piece.y, piece.x) == square:
                         piece.unhighlight()
                         selected = False
@@ -211,14 +207,14 @@ def run_game():
                         else:
                             update_sidemenu('Your turn!', (255, 255, 255))
 
-        # AI's turn
+        # Computer player's turn
         elif player == "AI":
 
-            # get a move from the minimax algorithm, at a search depth of 3
+            # get a move from the minimax/alphabeta algorithm, at a search depth of 3
             value, move = minimax(board, 3, float(
                 "-inf"), float("inf"), True, trans_table)
 
-            # this indicates an AI in checkmate; it has no moves
+            # this indicates an AI in checkmate; it has no possible moves
             if value == float("-inf") and move == 0:
                 print(value)
                 print(move)
@@ -259,8 +255,6 @@ def run_game():
                     update_sidemenu('Your Turn!', (255, 255, 255))
                     checkWhite = False
 
-                print(board.score)
-
             if value == float("inf"):
                 print("Player checkmate")
                 gameover = True
@@ -268,7 +262,7 @@ def run_game():
                 update_sidemenu(
                     'Checkmate!\nCPU Wins!\nPress any key to quit.', (255, 255, 0))
 
-        # update the screen and the sprites after the move has been
+        # update the screen and the sprites after the move has been performed
         screen.blit(bg, (0, 0))
         all_sprites_list.draw(screen)
         pygame.display.update()
@@ -277,7 +271,7 @@ def run_game():
 
 def game_over():
     '''
-    this runs before the game quits
+    This runs before the game quits. A nice game over screen.
     '''
     import os
     board.print_to_terminal()
@@ -290,8 +284,6 @@ def game_over():
     pygame.display.update()
     while True:
         for event in pygame.event.get():
-            # print(event.type)
-            # print(event)
             if event.type == pygame.KEYUP or event.type == pygame.MOUSEBUTTONUP:
                 return
             elif event.type == pygame.QUIT:
@@ -303,8 +295,8 @@ def game_over():
 
 def update_sidemenu(message, colour):
     '''
-    allows the side menu to be updated with a custom message and colour in the rgb(x,x,x) format
-    \n characters can be passed in manually to print a new line below
+    Allows the side menu to be updated with a custom message and colour in the rgb(x,x,x) format
+    \n characters can be passed in manually to print a new line below.
     '''
 
     screen.blit(sidebg, (480, 0))  # update side menu background
@@ -328,9 +320,9 @@ def update_sidemenu(message, colour):
 
 def camstream():
     '''
-    the bulk of the camera code was not written by us, since it's just here for fun
-    and does not contribute to the actual game in any meaningful way
-    we use this to make a avatar for the user on the fly
+    The bulk of the camera code was not written by us, since it's just here for fun
+    and does not contribute to the actual game in any meaningful way.
+    We use this to make a avatar for the user on the fly
     modified from https://gist.github.com/snim2/255151
     works only in linux, or by installing some dependency in windows [not tested]
     '''
@@ -345,12 +337,6 @@ def camstream():
         camera.start()
         screen = pygame.surface.Surface(SIZE, 0, display)
         screen = camera.get_image(screen)
-        # display.blit(screen, (0, 0))
-        # pygame.display.flip()
-        # for event in pygame.event.get():
-        #     if event.type == pygame.QUIT:
-        #         capture = False
-        #     elif event.type == pygame.KEYDOWN and event.key == K_s:
         pygame.image.save(screen, FILENAME)
         camera.stop()
         return
@@ -362,8 +348,8 @@ def camstream():
 
 def welcome():
     '''
-    display a welcome screen
-    this mostly is just blitting a bunch of surfaces in the right spot
+    Display a welcome screen.
+    This mostly is just blitting a bunch of surfaces in the right spot.
     '''
     # wood background
     menubg = pygame.image.load("assets/menubg.jpg").convert()
@@ -402,8 +388,6 @@ def welcome():
     pygame.event.clear()
     while True:
         for event in pygame.event.get():
-            # print(event.type)
-            # print(event)
             if event.type == pygame.KEYUP or event.type == pygame.MOUSEBUTTONUP:
                 return
             elif event.type == pygame.QUIT:
